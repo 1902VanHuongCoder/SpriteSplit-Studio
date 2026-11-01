@@ -1,0 +1,55 @@
+{
+ "canvas_center_x": 340,
+ "ground_y": 270,
+ "pivots_relative_to_center": {
+  "head": [
+   0,
+   104
+  ],
+  "torso": [
+   0,
+   248
+  ],
+  "shoulder_L": [
+   -24,
+   113
+  ],
+  "elbow_L": [
+   -36,
+   176
+  ],
+  "shoulder_R": [
+   24,
+   113
+  ],
+  "elbow_R": [
+   36,
+   176
+  ],
+  "hip_L": [
+   -9,
+   248
+  ],
+  "ankle_L": [
+   -10,
+   262
+  ],
+  "hip_R": [
+   9,
+   248
+  ],
+  "ankle_R": [
+   10,
+   262
+  ],
+  "fringe_L": [
+   -12,
+   62
+  ],
+  "fringe_R": [
+   12,
+   62
+  ]
+ },
+ "note": "pivot tuyet doi = x+340"
+}

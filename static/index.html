@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpriteSplit Studio - Tách bộ phận nhân vật 2D sang PNG & PSD</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="shortcut icon" href="/static/favicon.ico">
+    <link rel="apple-touch-icon" href="/static/icon.png">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <!-- Header phong cách AIVoice Studio -->
+    <header class="app-header">
+        <div class="brand-section">
+            <div class="brand-logo" style="overflow: hidden; padding: 0; background: transparent;">
+                <img src="/static/icon.png" width="38" height="38" alt="Logo" style="display: block; border-radius: 9px; box-shadow: 0 2px 8px rgba(249, 115, 22, 0.35);" />
+            </div>
+            <div class="brand-text">
+                <h1>SpriteSplit Studio <span class="badge-mvp">v1.1</span></h1>
+                <p>Bóc tách bộ phận nhân vật 2D</p>
+            </div>
+        </div>
+
+        <!-- Chuyển Tab Chế độ chính -->
+        <div class="studio-nav-tabs">
+            <button class="studio-nav-btn active" id="btnNavAuto">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="9" y1="3" x2="9" y2="21"></line>
+                </svg>
+                1. Bóc Tách Tự Động
+            </button>
+            <button class="studio-nav-btn" id="btnNavManual">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="6" cy="6" r="3"></circle>
+                    <circle cx="6" cy="18" r="3"></circle>
+                    <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
+                    <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
+                    <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
+                </svg>
+                2. Khoanh Vùng Thủ Công
+            </button>
+            <button class="studio-nav-btn" id="btnNavInspect">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                3. Kiểm tra File PSD
+            </button>
+            <button class="studio-nav-btn" id="btnNavAnim">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                4. Tạo Animation (Rig & Pivot)
+            </button>
+            <button class="studio-nav-btn" id="btnNavSvgAnim">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="12 2 19 21 12 17 5 21 12 2"></polygon>
+                </svg>
+                5. Tạo Animation (Vector SVG)
+            </button>
+        </div>
+
+    </header>
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: AUTO SEGMENTATION & PSD EXPORT     -->
+    <!-- ========================================== -->
+    <main class="main-layout" id="autoView">
+        
+        <!-- Left Panel: Controls & Layers -->
+        <aside class="left-panel">
+            
+            <!-- Card 1: Nguồn ảnh nhân vật -->
+            <section class="studio-card">
+                <div class="card-title-row">
+                    <span class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Ảnh nhân vật (Sprite Sheet)
+                    </span>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <button type="button" class="btn-clear-workspace" id="btnClearAutoWorkspace" title="Xóa vùng làm việc để tải ảnh nhân vật khác">
+                            🗑️ Làm mới
+                        </button>
+                        <span class="card-badge" id="sourceTypeBadgeAuto">Chưa tải ảnh</span>
+                    </div>
+                </div>
+
+                <!-- Dropzone Upload -->
+                <div class="dropzone" id="dropzoneAuto" style="display: block;">
+                    <input type="file" id="fileInputAuto" accept="image/png, image/jpeg, image/webp" style="display: none;">
+                    <div class="dropzone-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <p>Kéo thả ảnh nhân vật vào đây</p>
+                    <span>hoặc nhấn để duyệt file từ máy tính</span>
+                </div>
+
+                <div class="image-info-bar">
+                    <span id="infoDimensionsAuto">0 x 0 px</span>
+                    <span id="infoFilenameAuto">Chưa chọn file</span>
+                </div>
+            </section>
+
+            <!-- Card 2: Tùy chỉnh bóc tách -->
+            <section class="studio-card">
+                <div class="card-title-row">
+                    <span class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="4" y1="21" x2="4" y2="14"></line>
+                            <line x1="4" y1="10" x2="4" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12" y2="3"></line>
+                            <line x1="20" y1="21" x2="20" y2="16"></line>
+                            <line x1="20" y1="12" x2="20" y2="3"></line>
+                            <line x1="1" y1="14" x2="7" y2="14"></line>
+                            <line x1="9" y1="8" x2="15" y2="8"></line>
+                            <line x1="17" y1="16" x2="23" y2="16"></line>
+                        </svg>
+                        Tùy chỉnh tự động
+                    </span>
+                    <span class="card-badge" id="reprocessIndicator">Tự động cập nhật</span>
+                </div>
+
+                <!-- Slider 1: Ngưỡng màu nền -->
+                <div class="slider-group">
+                    <div class="slider-label-row">
+                        <span class="slider-label">Độ nhạy màu nền:</span>
+                        <span class="slider-value" id="valThreshold">240</span>
+                    </div>
+                    <input type="range" class="styled-range" id="sliderThreshold" min="200" max="255" value="240">
+                    <div class="slider-ticks">
+                        <span>Chính xác (220)</span>
+                        <span>Mặc định (240)</span>
+                        <span>Mạnh (252)</span>
+                    </div>
+                </div>
+
+                <!-- Slider 2: Lọc chi tiết quá nhỏ -->
+                <div class="slider-group">
+                    <div class="slider-label-row">
+                        <span class="slider-label">Lọc nhiễu tối thiểu:</span>
+                        <span class="slider-value" id="valMinArea">80 px</span>
+                    </div>
+                    <input type="range" class="styled-range" id="sliderMinArea" min="20" max="300" value="80">
+                    <div class="slider-ticks">
+                        <span>Nhỏ (30)</span>
+                        <span>Khuyên dùng (80)</span>
+                        <span>Lớn (200)</span>
+                    </div>
+                </div>
+
+                <!-- Slider 3: Gom nhóm chi tiết gần -->
+                <div class="slider-group">
+                    <div class="slider-label-row">
+                        <span class="slider-label">Khoảng cách gom nhóm:</span>
+                        <span class="slider-value" id="valMergeDist">0 px</span>
+                    </div>
+                    <input type="range" class="styled-range" id="sliderMergeDist" min="0" max="15" value="0">
+                    <div class="slider-ticks">
+                        <span>Tách rời (0)</span>
+                        <span>Ghép cụm (6)</span>
+                        <span>Gom mạnh (12)</span>
+                    </div>
+                </div>
+
+                <!-- Toggle Khử viền lem -->
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <h4>Khử viền lem trắng (Anti-aliasing)</h4>
+                        <p>Làm mịn viền nét vẽ, chống răng cưa</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="toggleFeather" checked>
+                        <span class="switch-slider"></span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Card 3: Danh sách Layer tự động -->
+            <section class="studio-card" style="flex: 1; display: flex; flex-direction: column;">
+                <div class="card-title-row" style="margin-bottom: 8px;">
+                    <span class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                            <polyline points="2 17 12 22 22 17"></polyline>
+                            <polyline points="2 12 12 17 22 12"></polyline>
+                        </svg>
+                        Bộ phận tự động quét
+                    </span>
+                    <span class="card-badge" id="partsCountBadge">0 bộ phận</span>
+                </div>
+
+                <div class="layers-header">
+                    <label style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; cursor: pointer;">
+                        <input type="checkbox" id="checkSelectAll" checked> Chọn tất cả
+                    </label>
+                    <span style="font-size: 11px; color: var(--text-muted);">Click tên để đổi</span>
+                </div>
+
+                <div class="layers-scroll" id="layersList">
+                    <!-- Dynamic Layer Items -->
+                </div>
+            </section>
+
+        </aside>
+
+        <!-- Right Panel: Canvas & Actions -->
+        <section class="right-panel">
+            
+            <!-- Topbar Canvas -->
+            <div class="canvas-topbar">
+                <div class="canvas-title-group">
+                    <span class="canvas-title">Vùng làm việc tự động</span>
+                    <div class="canvas-controls-pill">
+                        <button class="mode-btn active" id="btnModeBbox">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="9" y1="3" x2="9" y2="21"></line>
+                            </svg>
+                            Khung BBox
+                        </button>
+                        <button class="mode-btn" id="btnModeAlpha">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="m4.93 4.93 4.24 4.24"></path>
+                                <path d="m14.83 9.17 4.24-4.24"></path>
+                                <path d="m14.83 14.83 4.24 4.24"></path>
+                                <path d="m9.17 14.83-4.24 4.24"></path>
+                            </svg>
+                            Nền trong suốt
+                        </button>
+                    </div>
+                </div>
+
+                <div class="canvas-stats" id="canvasStats">
+                    Đang quét hình ảnh...
+                </div>
+            </div>
+
+            <!-- Canvas Viewport -->
+            <div class="canvas-viewport" id="canvasViewport">
+                <div class="canvas-container" id="canvasContainer">
+                    <img id="mainImage" src="" alt="Sprite sheet" />
+                    <svg class="svg-overlay" id="svgOverlay"></svg>
+                </div>
+
+                <!-- Floating Zoom -->
+                <div class="floating-zoom">
+                    <button class="zoom-btn" id="btnZoomOut">-</button>
+                    <button class="zoom-btn" id="btnZoomReset">Fit</button>
+                    <button class="zoom-btn" id="btnZoomIn">+</button>
+                </div>
+            </div>
+
+            <!-- Bottom Action Bar -->
+            <div class="bottom-action-bar">
+                <div class="action-status-col">
+                    <div class="status-time">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>Thời gian quét: <strong id="valProcessTime">0.12s</strong></span>
+                    </div>
+                    <span>•</span>
+                    <div class="folder-select-container">
+                        <span class="folder-title">📁 Lưu tại:</span>
+                        <div class="folder-display-box" title="Đường dẫn thư mục lưu file kết quả">
+                            <input type="text" class="input-folder-path" id="inputFolderPathAuto" readonly />
+                            <button type="button" class="btn-browse-folder" id="btnBrowseFolderAuto">
+                                Đổi thư mục...
+                            </button>
+                            <button type="button" class="btn-reset-folder" id="btnResetFolderAuto" title="Khôi phục thư mục mặc định">
+                                ↺
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-export-primary" id="btnExport">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Xuất Toàn Bộ PNG & File PSD
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 2: MANUAL CROP & SEPARATION                         -->
+    <!-- ======================================================== -->
+    <main class="main-layout" id="manualView" style="display: none;">
+        
+        <!-- Left Panel: Manual Controls & Extracted Parts -->
+        <aside class="left-panel">
+            
+            <!-- Card 1: Vùng khoanh hiện tại -->
+            <section class="studio-card">
+                <div class="card-title-row">
+                    <span class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="6" cy="6" r="3"></circle>
+                            <circle cx="6" cy="18" r="3"></circle>
+                            <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
+                            <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
+                            <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
+                        </svg>
+                        Khoanh vùng bộ phận
+                    </span>
+                    <span class="card-badge" id="manualSelectionBadge">Chưa chọn vùng</span>
+                </div>
+
+                <div class="manual-selection-card">
+                    <div class="coord-row">
+                        <span>Tọa độ:</span>
+                        <span class="coord-badge" id="valCropCoords">X: 0, Y: 0</span>
+                    </div>
+                    <div class="coord-row">
+                        <span>Kích thước:</span>
+                        <span class="coord-badge" id="valCropSize">0 x 0 px</span>
+                    </div>
+
+                    <div style="margin-top: 10px;">
+                        <label style="font-size: 11.5px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">
+                            Tên bộ phận (Tên Layer):
+                        </label>
+                        <input type="text" id="inputManualPartName" class="layer-name-input" value="Head" style="width: 100%; border: 1px solid #cbd5e1; background: #ffffff; padding: 6px 10px; border-radius: 6px;" />
+                    </div>
+
+                    <!-- Gợi ý tên nhanh (Chuẩn hóa theo Funny Animation Assistant) -->
+                    <div class="quick-name-pills">
+                        <button class="quick-name-pill" data-name="Head">🗣️ Head (Đầu)</button>
+                        <button class="quick-name-pill" data-name="Body">👕 Body (Thân)</button>
+                        <button class="quick-name-pill" data-name="Left Arm">💪 Left Arm (Tay T)</button>
+                        <button class="quick-name-pill" data-name="Right Arm">✋ Right Arm (Tay P)</button>
+                        <button class="quick-name-pill" data-name="Left Leg">🦵 Left Leg (Chân T)</button>
+                        <button class="quick-name-pill" data-name="Right Leg">👟 Right Leg (Chân P)</button>
+                        <button class="quick-name-pill" data-name="Mắt mở (eye_open)">👁️ Mắt</button>
+                        <button class="quick-name-pill" data-name="Miệng đóng (mouth_closed)">👄 Miệng</button>
+                    </div>
+
+                    <button class="btn-extract-manual" id="btnExtractManual" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        ✂️ Tách Bộ Phận Này
+                    </button>
+                </div>
+
+                <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4;">
+                    💡 <strong>Hướng dẫn:</strong> Kéo giữ chuột trên ảnh để vẽ hình chữ nhật bao quanh bộ phận muốn tách, sau đó ấn <strong>"Tách Bộ Phận Này"</strong>.
+                </div>
+            </section>
+
+            <!-- Card 2: Danh sách các bộ phận đã khoanh -->
+            <section class="studio-card" style="flex: 1; display: flex; flex-direction: column;">
+                <div class="card-title-row" style="margin-bottom: 8px;">
+                    <span class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                            <polyline points="2 17 12 22 22 17"></polyline>
+                            <polyline points="2 12 12 17 22 12"></polyline>
+                        </svg>
+                        Bộ phận sẽ dùng xuất file
+                    </span>
+                    <span class="card-badge" id="manualPartsCountBadge">0 bộ phận</span>
+                </div>
+
+                <div class="layers-header">
+                    <span style="font-size: 11.5px; color: var(--text-secondary);">Click tên để sửa • Nhấn 🗑️ để xóa</span>
+                    <button id="btnClearManualParts" style="border: none; background: transparent; color: #ef4444; font-size: 11px; font-weight: 600; cursor: pointer;">
+                        Xóa tất cả
+                    </button>
+                </div>
+
+                <div class="layers-scroll" id="manualLayersList">
+                    <!-- Dynamic Manual Layer Items -->
+                    <div id="manualEmptyPlaceholder" style="text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 12px;">
+                        Chưa có bộ phận nào.<br>Hãy khoanh vùng trên ảnh để thêm vào danh sách!
+                    </div>
+                </div>
+            </section>
+
+        </aside>
+
+        <!-- Right Panel: Manual Crop Interactive Canvas -->
+        <section class="right-panel">
+            
+            <!-- Topbar Canvas -->
+            <div class="canvas-topbar">
+                <div class="canvas-title-group">
+                    <span class="canvas-title">Vùng khoanh chọn thủ công</span>
+                    <span style="font-size: 12px; color: var(--text-muted);">
+                        🖱️ Kéo giữ chuột trái để vẽ khung khoanh vùng
+                    </span>
+                    <button type="button" class="btn-defringe-action" id="btnUploadManualImage" style="font-size: 11px; padding: 4px 8px; margin-left: 8px;">
+                        📁 Tải ảnh nhân vật
+                    </button>
+                    <input type="file" id="fileInputManual" accept="image/png, image/jpeg, image/webp" style="display: none;">
+                </div>
+
+                <div class="canvas-stats" id="manualCanvasStats">
+                    Sẵn sàng khoanh vùng
+                </div>
+            </div>
+
+            <!-- Canvas Viewport for Manual Selection -->
+            <div class="canvas-viewport" id="manualCanvasViewport" style="cursor: crosshair;">
+                <div class="canvas-container" id="manualCanvasContainer">
+                    <img id="manualMainImage" src="" alt="Sprite sheet" />
+                    <svg class="svg-overlay" id="manualSvgOverlay"></svg>
+                </div>
+
+                <!-- Floating Zoom -->
+                <div class="floating-zoom">
+                    <button class="zoom-btn" id="btnManualZoomOut">-</button>
+                    <button class="zoom-btn" id="btnManualZoomReset">Fit</button>
+                    <button class="zoom-btn" id="btnManualZoomIn">+</button>
+                </div>
+            </div>
+
+            <!-- Bottom Action Bar -->
+            <div class="bottom-action-bar">
+                <div class="action-status-col">
+                    <div class="status-time">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>Đã khoanh: <strong id="valManualTotalCount">0 bộ phận</strong></span>
+                    </div>
+                    <span>•</span>
+                    <div class="folder-select-container">
+                        <span class="folder-title">📁 Lưu tại:</span>
+                        <div class="folder-display-box" title="Đường dẫn thư mục lưu file kết quả">
+                            <input type="text" class="input-folder-path" id="inputFolderPathManual" readonly />
+                            <button type="button" class="btn-browse-folder" id="btnBrowseFolderManual">
+                                Đổi thư mục...
+                            </button>
+                            <button type="button" class="btn-reset-folder" id="btnResetFolderManual" title="Khôi phục thư mục mặc định">
+                                ↺
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-export-primary" id="btnExportManual">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Xuất PNG & File PSD Đã Khoanh
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 3: PSD INSPECTOR ON DARK BACKGROUND (SOI VIỀN TRẮNG) -->
+    <!-- ======================================================== -->
+    <main class="main-layout" id="inspectView" style="display: none;">
+        
+        <!-- Left Panel: Controls & Layers -->
+        <aside class="left-panel">
+
+            <!-- Card 1: Nguồn File PSD -->
+            <section class="studio-card">
+                <div class="card-title-row">
+                    <span class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        Nhập File PSD (.psd)
+                    </span>
+                    <span class="card-badge" id="inspectStatusBadge">Chờ tải file</span>
+                </div>
+
+                <!-- Dropzone Upload PSD -->
+                <div class="dropzone dropzone-inspect" id="dropzoneInspect">
+                    <input type="file" id="fileInputInspect" accept=".psd" style="display: none;">
+                    <div class="dropzone-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <p>Kéo thả file PSD vào đây</p>
+                    <span>Hỗ trợ file từ Photopea hoặc phần mềm này</span>
+                </div>
+
+                <div class="image-info-bar">
+                    <span id="infoDimensionsInspect">0 x 0 px</span>
+                    <span id="infoFilenameInspect">Chưa chọn file</span>
+                </div>
+            </section>
+
+            <!-- Card 2: Chế độ nền soi viền -->
+            <section class="studio-card">
+                <div class="card-title-row">
+                    <span class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 2a10 10 0 0 0 0 20z"></path>
+                        </svg>
+                        Màu nền soi viền (Dark Mode)
+                    </span>
+                </div>
+                <div class="dark-bg-picker">
+                    <button class="bg-pick-btn active" data-bg="black" title="Nền đen tuyền (#000000) - Rõ nhất các vệt trắng">
+                        <span class="color-dot" style="background: #000000; border: 1px solid #444;"></span>
+                        Đen tuyền
+                    </button>
+                    <button class="bg-pick-btn" data-bg="darkgray" title="Nền xám than (#18181b) - Tương phản cao dịu mắt">
+                        <span class="color-dot" style="background: #18181b; border: 1px solid #444;"></span>
+                        Xám than
+                    </button>
+                    <button class="bg-pick-btn" data-bg="navy" title="Nền xanh đen (#0f172a)">
+                        <span class="color-dot" style="background: #0f172a; border: 1px solid #444;"></span>
+                        Xanh đen
+                    </button>
+                    <button class="bg-pick-btn" data-bg="darkchecker" title="Caro ô cờ tối chuyên dụng">
+                        <span class="color-dot bg-checker-dot"></span>
+                        Caro tối
+                    </button>
+                </div>
+            </section>
+
+            <!-- Card 3: Công cụ xử lý viền -->
+            <section class="studio-card">
+                <div class="card-title-row">
+                    <span class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        Khử viền trắng theo Layer
+                    </span>
+                    <span class="card-badge" id="inspectTargetBadge" style="max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Chưa chọn</span>
+                </div>
+
+                <!-- Box thông tin layer mục tiêu đang được chọn -->
+                <div class="target-layer-box" id="targetLayerBox">
+                    <span class="target-dot"></span>
+                    <span id="targetLayerName" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11.5px;">Click layer cần khử viền</span>
+                </div>
+
+                <!-- Nút khử viền 1px & 2px cho layer đang chọn -->
+                <div class="defringe-action-row">
+                    <button class="btn-defringe-action" id="btnDefringe1px" title="Khử viền 1px cho riêng layer đang chọn (giữ nguyên nét mảnh)">
+                        🪄 Khử viền 1px (Layer đang chọn)
+                    </button>
+                    <button class="btn-defringe-action" id="btnDefringe2px" title="Khử viền 2px triệt để cho riêng layer đang chọn">
+                        ✨ Khử viền 2px (Triệt để)
+                    </button>
+                </div>
+
+                <!-- Nút Hoàn tác (Undo) và Làm lại (Redo) -->
+                <div class="history-action-row">
+                    <button class="btn-history-action" id="btnInspectUndo" disabled title="Hoàn tác khử viền trước đó (Ctrl + Z)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 7v6h6"></path>
+                            <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
+                        </svg>
+                        <span>Hoàn tác (Ctrl+Z)</span>
+                    </button>
+                    <button class="btn-history-action" id="btnInspectRedo" disabled title="Làm lại thao tác vừa hoàn tác (Ctrl + Y)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 7v6h-6"></path>
+                            <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"></path>
+                        </svg>
+                        <span>Làm lại (Ctrl+Y)</span>
+                    </button>
+                </div>
+
+
+            </section>
+
+            <!-- Card 4: Danh sách layer trong PSD -->
+            <section class="studio-card layer-list-card">
+                <div class="card-title-row">
+                    <span class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                            <polyline points="2 17 12 22 22 17"></polyline>
+                            <polyline points="2 12 12 17 22 12"></polyline>
+                        </svg>
+                        Các layer trong PSD
+                    </span>
+                    <span class="card-badge" id="inspectLayersCountBadge">0 layer</span>
+                </div>
+
+                <div class="layer-list-actions">
+                    <button class="btn-text-action" id="btnInspectShowAll">Hiện tất cả</button>
+                    <button class="btn-text-action" id="btnInspectHideAll">Ẩn tất cả</button>
+                </div>
+
+                <!-- Danh sách layer hiển thị -->
+                <div class="inspect-layers-container" id="inspectLayersList">
+                    <div class="empty-parts-tip" id="inspectEmptyPlaceholder">
+                        Chưa có file PSD nào.<br>
+                        Hãy tải file PSD đã lưu hoặc đã sửa từ Photopea lên để soi viền!
+                    </div>
+                </div>
+            </section>
+
+        </aside>
+
+        <!-- Right Panel: Dark Workspace -->
+        <section class="right-panel">
+
+            <!-- Workspace Header Bar -->
+            <div class="canvas-topbar">
+                <div class="viewport-title-group">
+                    <span class="canvas-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        Vùng soi viền
+                    </span>
+                </div>
+
+                <div class="canvas-stats" id="inspectCanvasStats">
+                    Sẵn sàng kiểm tra
+                </div>
+            </div>
+
+            <!-- Canvas Viewport with Dark Background -->
+            <div class="canvas-viewport canvas-viewport-dark bg-black" id="inspectCanvasViewport">
+                <div class="canvas-container canvas-container-dark" id="inspectCanvasContainer">
+                    <!-- Các layer ảnh sẽ được sinh ra dynamically tại đây -->
+                </div>
+
+                <!-- Floating Zoom -->
+                <div class="floating-zoom floating-zoom-dark">
+                    <button class="zoom-btn" id="btnInspectZoomOut">-</button>
+                    <button class="zoom-btn" id="btnInspectZoomReset">Fit</button>
+                    <button class="zoom-btn" id="btnInspectZoomIn">+</button>
+                </div>
+            </div>
+
+            <!-- Bottom Action Bar -->
+            <div class="bottom-action-bar">
+                <div class="action-status-col">
+                    <div class="status-time">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>Layer hiển thị: <strong id="valInspectVisibleCount">0 layer</strong></span>
+                    </div>
+                    <span>•</span>
+                    <div class="folder-select-container">
+                        <span class="folder-title">📁 Lưu tại:</span>
+                        <div class="folder-display-box" title="Đường dẫn thư mục lưu file kết quả">
+                            <input type="text" class="input-folder-path" id="inputFolderPathInspect" readonly />
+                            <button type="button" class="btn-browse-folder" id="btnBrowseFolderInspect">
+                                Đổi thư mục...
+                            </button>
+                            <button type="button" class="btn-reset-folder" id="btnResetFolderInspect" title="Khôi phục thư mục mặc định">
+                                ↺
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-export-primary" id="btnExportInspect">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Xuất PSD & PNG
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 4: 2D CHARACTER ANIMATION & PIVOT RIGGING STUDIO    -->
+    <!-- ======================================================== -->
+    <main class="main-layout" id="animView" style="display: none;">
+
+        <!-- Left Panel: PSD Import, Pivot Setup, Animation Presets & Layers -->
+        <aside class="left-panel">
+
+            <!-- Card 1: Nguồn PSD & Công cụ ghép khớp nhanh -->
+            <section class="studio-card">
+                <div class="card-title-row">
+                    <span class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        1. Nhập PSD
+                    </span>
+                    <span class="card-badge" id="animStatusBadge">Chờ nạp PSD</span>
+                </div>
+
+                <!-- Dropzone tải PSD -->
+                <div class="dropzone dropzone-inspect" id="dropzoneAnim" style="padding: 14px 10px;">
+                    <input type="file" id="fileInputAnim" accept=".psd" style="display: none;">
+                    <div class="dropzone-icon" style="margin-bottom: 4px;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <p style="font-size: 12.5px;">Kéo thả hoặc chọn file PSD nhân vật (.psd)</p>
+                    <span style="font-size: 11px;">Tự động tách từng layer bộ phận & gắn tâm Pivot</span>
+                </div>
+
+                <div class="anim-quick-import-row" style="display: flex; gap: 6px; margin-top: 8px;">
+                    <button type="button" class="btn-defringe-action" id="btnImportFromTab3" style="flex: 1; font-size: 11.5px; padding: 7px 8px;" title="Lấy ngay các layer PSD đã kiểm tra và khử viền ở Tab 3">
+                        ⚡ Lấy PSD từ Tab 3
+                    </button>
+                    <button type="button" class="btn-defringe-action" id="btnSnapExpressions" style="flex: 1; font-size: 11.5px; padding: 7px 8px;" title="Tự động căn tất cả các layer Mắt nhắm/mở và Miệng đóng/mở trùng khít vị trí trên khuôn mặt">
+                        🎯 Trùng Mắt/Miệng
+                    </button>
+                </div>
+
+                <div class="anim-quick-import-row" style="display: flex; gap: 6px; margin-top: 6px;">
+                    <button type="button" class="btn-defringe-action" id="btnSpreadLayers" style="flex: 1; font-size: 11.5px; padding: 7px 8px; background: #eff6ff; border-color: #93c5fd; color: #1d4ed8;" title="Tách rời toàn bộ các bộ phận đang đè lên nhau ra thành lưới rõ ràng để dễ nhìn và kéo ghép">
+                        🧩 Dàn đều
+                    </button>
+                    <button type="button" class="btn-defringe-action" id="btnAutoAssembleRig" style="flex: 1; font-size: 11.5px; padding: 7px 8px;" title="Tự động ghép Đầu, Thân, 2 Tay, 2 Chân, Mắt, Miệng từ ảnh tách rời thành hình nhân vật hoàn chỉnh">
+                        🧲 Lắp ghép
+                    </button>
+                    <button type="button" class="btn-defringe-action" id="btnResetOriginalLayout" style="font-size: 11.5px; padding: 7px 8px;" title="Khôi phục vị trí gốc như trong file PSD">
+                        ↺ Gốc
+                    </button>
+                </div>
+
+                <div class="anim-quick-import-row" style="display: flex; gap: 6px; margin-top: 6px;">
+                    <button type="button" class="btn-defringe-action" id="btnSaveAnimProject" style="flex: 1; font-size: 11.5px; padding: 7px 8px; font-weight: 600; background: #f0fdf4; border-color: #86efac; color: #166534;" title="Lưu toàn bộ thiết lập tâm neo, khớp nối, vai trò, tỉ lệ và ảnh vào file .sps để lần sau mở lại làm tiếp">
+                        💾 Lưu SPS
+                    </button>
+                    <button type="button" class="btn-defringe-action" id="btnOpenAnimProject" style="flex: 1; font-size: 11.5px; padding: 7px 8px; font-weight: 600; background: #f8fafc; border-color: #cbd5e1; color: #334155;" title="Mở file thiết lập .sps đã lưu">
+                        📂 Mở SPS
+                    </button>
+                    <input type="file" id="fileInputAnimProject" accept=".sps,.json" style="display: none;">
+                    <button type="button" class="btn-defringe-action" id="btnRestoreAnimSession" style="font-size: 11px; padding: 7px 8px;" title="Khôi phục lại phiên làm việc gần nhất nếu vừa tải lại trang">
+                        ↺ Khôi phục
+                    </button>
+                </div>
+            </section>
+
+            
+            <!-- Hàng 2 Card nằm cạnh nhau: Card 2 (Điểm Neo & Khớp) và Card 4 (Danh Sách Layer) -->
+                        <!-- Card 2: Thiết lập Điểm Neo Pivot & Khớp của Layer đang chọn -->
+            <section class="studio-card" id="animPivotCard">
+                <div class="card-title-row">
+                    <span class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <line x1="12" y1="2" x2="12" y2="6"></line>
+                            <line x1="12" y1="18" x2="12" y2="22"></line>
+                            <line x1="2" y1="12" x2="6" y2="12"></line>
+                            <line x1="18" y1="12" x2="22" y2="12"></line>
+                        </svg>
+                        2. Điểm Neo Pivot & Khớp
+                    </span>
+                    <span class="card-badge" id="animSelectedLayerBadge" style="max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Chưa chọn</span>
+                </div>
+
+                <!-- Thông báo bộ phận đang chọn & Nút Duplicate / Xóa -->
+                <div class="target-layer-box" id="animTargetLayerBox" style="margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 6px;">
+                    <div style="display: flex; align-items: center; gap: 6px; min-width: 0; flex: 1;">
+                        <span class="target-dot"></span>
+                        <span id="animTargetLayerName" style="font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Click chọn bộ phận</span>
+                    </div>
+                    <div style="display: flex; gap: 4px; flex-shrink: 0;">
+                        <button type="button" id="btnAnimDuplicateSelected" title="Nhân bản layer này" style="display: none; border: 1px solid #bbf7d0; background: #f0fdf4; color: #166534; font-size: 12px; padding: 2px 6px; border-radius: 6px; cursor: pointer; white-space: nowrap;">
+                            📋
+                        </button>
+                        <button type="button" id="btnAnimDeleteSelected" title="Xóa bỏ bộ phận đang chọn" style="display: none; border: 1px solid #fecaca; background: #fef2f2; color: #dc2626; font-size: 12px; padding: 2px 6px; border-radius: 6px; cursor: pointer; white-space: nowrap;">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chọn Vai trò (Role) & Khớp Cha (Parent) -->
+                <div class="anim-form-grid">
+                    <div class="anim-form-group">
+                        <label>Vai trò:</label>
+                        <select id="selectAnimLayerRole" class="anim-select">
+                            <optgroup label="── Thân & Đầu (Core) ──">
+                                <option value="body">👕 Thân — [Body] (Khớp gốc)</option>
+                                <option value="head">🙂 Đầu — [Head] (Pivot ở cổ)</option>
+                                <option value="face">😊 Khuôn mặt — [Face]</option>
+                                <option value="hair">💇 Tóc / Mũ — [Hair] (Đi theo Đầu)</option>
+                                <option value="expression">🎭 Biểu cảm gộp — [Expression]</option>
+                            </optgroup>
+                            <optgroup label="── Cánh Tay 1 Khớp (Standard Arms) ──">
+                                <option value="arm_left">💪 Tay trái nguyên — [Left Arm]</option>
+                                <option value="arm_right">🤚 Tay phải nguyên — [Right Arm]</option>
+                            </optgroup>
+                            <optgroup label="── Cánh Tay 2 Khớp (Detailed Arms) ──">
+                                <option value="arm_upper_left">🦾 Bắp tay trên Trái — [Left Upper Arm]</option>
+                                <option value="arm_lower_left">🤜 Cẳng tay dưới Trái — [Left Lower Arm]</option>
+                                <option value="arm_upper_right">🦾 Bắp tay trên Phải — [Right Upper Arm]</option>
+                                <option value="arm_lower_right">🤛 Cẳng tay dưới Phải — [Right Lower Arm]</option>
+                            </optgroup>
+                            <optgroup label="── Chân 1 Khớp (Standard Legs) ──">
+                                <option value="leg_left">🦵 Chân trái nguyên — [Left Leg]</option>
+                                <option value="leg_right">🦶 Chân phải nguyên — [Right Leg]</option>
+                            </optgroup>
+                            <optgroup label="── Chân 2 Khớp (Detailed Legs) ──">
+                                <option value="leg_thigh_left">🦵 Đùi trên Trái — [Left Thigh]</option>
+                                <option value="leg_calf_left">👟 Bắp chân dưới Trái — [Left Calf]</option>
+                                <option value="leg_thigh_right">🦵 Đùi trên Phải — [Right Thigh]</option>
+                                <option value="leg_calf_right">👟 Bắp chân dưới Phải — [Right Calf]</option>
+                            </optgroup>
+                            <optgroup label="── Mắt, Miệng & Phụ kiện (Facial / Props) ──">
+                                <option value="eye_open">👁️ Mắt - Mở (Mặc định)</option>
+                                <option value="eye_closed">😌 Mắt - Nhắm (Khi chớp mắt)</option>
+                                <option value="eye_extra">😲 Mắt - Biểu cảm phụ</option>
+                                <option value="mouth_closed">😶 Miệng - Đóng (Mặc định)</option>
+                                <option value="mouth_half">😮 Miệng - Mở vừa (Nhép miệng)</option>
+                                <option value="mouth_open">😃 Miệng - Mở to (Nhép miệng)</option>
+                                <option value="mouth_extra">😬 Miệng - Biểu cảm phụ</option>
+                                <option value="head_prop">💧 Phụ kiện mặt (Mồ hôi / Kính / Tai)</option>
+                                <option value="custom">✨ Bộ phận tự do (Custom)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="anim-form-group">
+                        <label>Khớp cha:</label>
+                        <select id="selectAnimLayerParent" class="anim-select">
+                            <option value="">-- Độc lập (Không gắn khớp cha) --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Hộp kiểm tra tương thích chuẩn Funny Animation Assistant -->
+                <div id="funnyNameCheckBox" style="margin-top: 6px; padding: 6px 8px; border-radius: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; font-size: 11px; color: #166534; line-height: 1.4;">
+                    🔍 <strong>Chuẩn Animation:</strong> <span id="funnyNameCheckText">Tự động gán chuẩn tên khi nạp PSD.</span>
+                </div>
+
+                <!-- Lật đối xứng (Flip Horizontal / Flip Vertical) -->
+                <div style="display: flex; gap: 8px; margin-top: 8px; align-items: center;">
+                    <span style="font-size: 11.5px; font-weight: 600; color: #334155;">Lật đối xứng:</span>
+                    <button type="button" class="btn-flip-toggle" id="btnAnimFlipH" title="Lật ngang bộ phận (Flip Horizontal)">⇄ Lật ngang</button>
+                    <button type="button" class="btn-flip-toggle" id="btnAnimFlipV" title="Lật dọc bộ phận (Flip Vertical)">⇅ Lật dọc</button>
+                </div>
+
+                <!-- Góc xoay tại Pivot (xoay trực tiếp trên Sân khấu hoặc kéo slider) -->
+                <div class="control-group" style="margin-top: 8px; margin-bottom: 6px;">
+                    <div class="control-header">
+                        <label style="font-size: 11.5px; font-weight: 600; color: #334155;">Góc xoay tại Pivot:</label>
+                        <span class="control-val" id="valAnimLayerRotation">0°</span>
+                    </div>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <input type="range" id="sliderAnimLayerRotation" min="-180" max="180" value="0" step="1" class="styled-range" style="flex: 1;" title="Xoay bộ phận quanh tâm Pivot (Hoặc kéo xoay trực tiếp trên Sân khấu)">
+                        <button type="button" class="btn-text-action" id="btnResetAnimLayerRotation" style="padding: 2px 6px;">0°</button>
+                    </div>
+                </div>
+
+                <!-- Tỉ lệ kích thước (Scale) & Tinh chỉnh biên độ chuyển động riêng -->
+                <div class="layer-custom-motion-box" style="margin-top: 8px;">
+                    <div class="control-group" style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color);">
+                        <div class="control-header">
+                            <label style="font-size: 11.5px; font-weight: 700; color: #0f172a;">📐 Tỉ lệ:</label>
+                            <span class="control-val" id="valLayerScale">1.00x</span>
+                        </div>
+                        <div style="display: flex; gap: 6px; align-items: center; margin-top: 3px;">
+                            <input type="range" id="sliderLayerScale" min="0.2" max="3.0" value="1.0" step="0.05" class="styled-range" style="flex: 1;" title="Phóng to / thu nhỏ bộ phận">
+                            <button type="button" class="btn-text-action" id="btnResetLayerScale" style="font-size: 10.5px; padding: 2px 6px;">1.0x</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span style="font-size: 11.5px; font-weight: 700; color: #1e293b;">⚙️ Biên độ:</span>
+                        <button type="button" class="btn-text-action" id="btnResetLayerMotion" style="font-size: 11px;">Mặc định</button>
+                    </div>
+                    <div class="control-group" style="margin-bottom: 6px;">
+                        <div class="control-header">
+                            <label style="font-size: 11.5px;">Biên độ lắc/xoay thêm:</label>
+                            <span class="control-val" id="valLayerSwing">0°</span>
+                        </div>
+                        <input type="range" id="sliderLayerSwing" min="-60" max="60" value="0" step="1" class="styled-range">
+                    </div>
+                    <div class="control-group" style="margin-bottom: 6px;">
+                        <div class="control-header">
+                            <label style="font-size: 11.5px;">Nhún dọc / ngang:</label>
+                            <span class="control-val" id="valLayerMoveY">0 px</span>
+                        </div>
+                        <div style="display: flex; gap: 6px;">
+                            <input type="range" id="sliderLayerMoveY" min="-30" max="30" value="0" step="1" class="styled-range" title="Nhún dọc Y">
+                            <input type="range" id="sliderLayerMoveX" min="-30" max="30" value="0" step="1" class="styled-range" title="Dịch ngang X">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Card 3: Danh sách Layer Bộ phận (Nằm bên dưới Card 2) -->
+            <section class="studio-card layer-list-card" id="animLayersCard">
+                <div class="card-title-row">
+                    <span class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                            <polyline points="2 17 12 22 22 17"></polyline>
+                            <polyline points="2 12 12 17 22 12"></polyline>
+                        </svg>
+                        3. Danh Sách Layer
+                    </span>
+                    <span class="card-badge" id="animLayersCountBadge">0 layer</span>
+                </div>
+
+                <div class="layer-list-actions" style="flex-wrap: wrap; gap: 4px;">
+                    <button type="button" class="btn-text-action" id="btnAnimShowAll">Hiện tất cả</button>
+                    <button type="button" class="btn-text-action" id="btnAnimHideAll">Ẩn tất cả</button>
+                    <button type="button" class="btn-text-action" id="btnAnimDeleteHidden" title="Xóa bỏ toàn bộ các layer đang bị tắt mắt ẩn đi" style="color: #dc2626; border-color: #fecaca; background: #fef2f2;">🗑️ Xóa layer ẩn</button>
+                    <button type="button" class="btn-text-action" id="btnAnimUndoDelete" disabled title="Khôi phục lại layer vừa xóa nhầm" style="opacity: 0.5;">↩️ Khôi phục</button>
+                </div>
+
+                <div class="inspect-layers-container" id="animLayersList" style="max-height: 220px; overflow-y: auto;">
+                    <div class="empty-parts-tip" id="animEmptyPlaceholder">
+                        Chưa có dữ liệu nhân vật.<br>
+                        Hãy kéo thả file PSD hoặc nhấn <strong>"⚡ Lấy PSD từ Tab 3"</strong> để bắt đầu đặt Pivot & tạo Animation!
+                    </div>
+                </div>
+            </section>
+
+            <!-- Card 4: Kho Điệu Bộ (Xếp ở cuối cùng) -->
+            <section class="studio-card" id="animPresetsCard">
+                <div class="card-title-row">
+                    <span class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        4. Kho Điệu Bộ
+                    </span>
+                    <span class="card-badge" style="background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa;">19 mẫu</span>
+                </div>
+
+                <!-- Bộ lọc nhóm hành động -->
+                <div id="animPresetCategoryTabs" style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px;">
+                    <button type="button" class="preset-cat-pill active" data-cat="all" style="font-size: 11px; padding: 3px 8px; border-radius: 99px; border: 1px solid #fdba74; background: #fff7ed; color: #c2410c; font-weight: 600; cursor: pointer;">Tất cả</button>
+                    <button type="button" class="preset-cat-pill" data-cat="locomotion" style="font-size: 11px; padding: 3px 8px; border-radius: 99px; border: 1px solid #e2e8f0; background: #f8fafc; color: #475569; cursor: pointer;">🚶 Di chuyển (4)</button>
+                    <button type="button" class="preset-cat-pill" data-cat="gesture" style="font-size: 11px; padding: 3px 8px; border-radius: 99px; border: 1px solid #e2e8f0; background: #f8fafc; color: #475569; cursor: pointer;">👋 Cử chỉ (8)</button>
+                    <button type="button" class="preset-cat-pill" data-cat="idle" style="font-size: 11px; padding: 3px 8px; border-radius: 99px; border: 1px solid #e2e8f0; background: #f8fafc; color: #475569; cursor: pointer;">🧘 Nghỉ (3)</button>
+                    <button type="button" class="preset-cat-pill" data-cat="emotion" style="font-size: 11px; padding: 3px 8px; border-radius: 99px; border: 1px solid #e2e8f0; background: #f8fafc; color: #475569; cursor: pointer;">🎭 Cảm xúc (4)</button>
+                </div>
+
+                <!-- Grid chọn Preset chuyển động -->
+                <div class="anim-preset-grid" id="animPresetGrid" style="max-height: 200px; overflow-y: auto; padding-right: 2px;">
+                    <!-- Nhóm Nghỉ (Idle) -->
+                    <button type="button" class="anim-preset-btn active" data-preset="idle" data-cat="idle" title="Nhịp thở nhẹ nhàng (Breathe)">
+                        <span>🧘</span> Đứng thở (Breathe)
+                    </button>
+                    <button type="button" class="anim-preset-btn" data-preset="float" data-cat="idle" title="Lơ lửng bồng bềnh trên không (Float)">
+                        <span>☁️</span> Lơ lửng (Float)
+                    </button>
+                    <button type="button" class="anim-preset-btn" data-preset="head_sway" data-cat="idle" title="Đung đưa người & đầu qua lại (Sway)">
+                        <span>🎵</span> Đung đưa (Sway)
+                    </button>
+
+                    <!-- Nhóm Di chuyển (Locomotion) -->
+                    <button type="button" class="anim-preset-btn" data-preset="walk" data-cat="locomotion" title="Đi bộ tiêu chuẩn (Walk)">
+                        <span>🚶</span> Đi bộ (Walk)
+                    </button>
+                    <button type="button" class="anim-preset-btn" data-preset="run" data-cat="locomotion" title="Chạy nhanh (Run)">
+                        <span>🏃</span> Chạy bộ (Run)
+                    </button>
+                    <button type="button" class="anim-preset-btn" data-preset="walk_detailed" data-cat="locomotion" title="Đi bộ gập khớp gối & khuỷu tay (Walk Detailed)">
+                        <span>🚶‍♂️</span> Đi bộ 2 khớp
+                    </button>
+                    <button type="button" class="anim-preset-btn" data-preset="run_detailed" data-cat="locomotion" title="Chạy gập khớp gối & khuỷu tay (Run Detailed)">
+                        <span>🏃‍♂️</span> Chạy 2 khớp
+                    </button>
+
+                    <!-- Nhóm Cử chỉ (Gesture) -->
+                    <button type="button" class="anim-preset-btn" data-preset="wave" data-cat="gesture" title="Giơ tay phải lên vẫy chào (Wave Right Hand)">
+                        <span>👋</span> Vẫy tay phải
+                    </button>
+                    <button type="button" class="anim-preset-btn" data-preset="wave_left" data-cat="gesture" title="Giơ tay trái lên vẫy chào (Wave Left Hand)">
+                        <span>🤚</span> Vẫy tay trái
+                    </button>
+                    <button type="button" class="anim-preset-btn" data-preset="point_right" data-cat="gesture" title="Giơ tay phải chỉ về phía trước (Point Right)">
+                        <span>👉</span> Chỉ tay phải
+                    </button>
+                    <button type="button" class="anim-preset-btn" data-preset="hands_up" data-cat="gesture" title="Giơ cả 2 tay lên cao ăn mừng (Raise Both Hands)">
+                        <span>🙌</span> Giơ 2 tay
+                    </button>
+                    <button type="button" class="anim-preset-btn" data-preset="nod" data-cat="gesture" title="Gật đầu đồng ý (Nod)">
+                        <span>🙂</span> Gật đầu (Nod)
+                    </button>
+                    <button type="button" class="anim-preset-btn" data-preset="shake_head" data-cat="gesture" title="Lắc đầu từ chối (Shake Head)">
+                        <span>↔️</span> Lắc đầu (Shake)
+                    </button>
+                    <button type="button" class="anim-preset-btn" data-preset="bow" data-cat="gesture" title="Gập người cúi chào lễ phép (Bow)">
+                        <span>🙇</span> Cúi chào (Bow)
+                    </button>
+                    <button type="button" class="anim-preset-btn" data-preset="jump" data-cat="gesture" title="Nhún chân bật nhảy lên cao (Jump)">
+                        <span>🎉</span> Nhảy lên (Jump)
+                    </button>
+
+                    <!-- Nhóm Cảm xúc & Thoại (Emotion & Talk) -->
+                    <button type="button" class="anim-preset-btn" data-preset="talk" data-cat="emotion" title="Nói chuyện kết hợp nhép miệng & cử chỉ tay (Talk)">
+                        <span>🗣️</span> Nói chuyện (Talk)
+                    </button>
+                    <button type="button" class="anim-preset-btn" data-preset="tremble" data-cat="emotion" title="Run rẩy vì sợ hãi hoặc tức giận (Tremble)">
+                        <span>🥶</span> Run rẩy (Tremble)
+                    </button>
+                    <button type="button" class="anim-preset-btn" data-preset="shock" data-cat="emotion" title="Giật mình nảy người ngạc nhiên (Shock)">
+                        <span>😱</span> Giật mình (Shock)
+                    </button>
+                    <button type="button" class="anim-preset-btn" data-preset="collapsed" data-cat="emotion" title="Ngã quỵ / Sụp đổ tuyệt vọng (Collapsed)">
+                        <span>😵</span> Ngã quỵ (Collapse)
+                    </button>
+                    <button type="button" class="anim-preset-btn" data-preset="custom" data-cat="all" title="Chỉ dùng thông số tùy chỉnh riêng của từng Layer">
+                        <span>🎛️</span> Tùy chỉnh riêng
+                    </button>
+                </div>
+
+                <!-- Tốc độ, Cường độ & Thời lượng xuất (Gọn gàng) -->
+                <div class="control-group" style="margin-top: 8px; margin-bottom: 8px;">
+                    <div class="control-header">
+                        <label>Tốc độ:</label>
+                        <span class="control-val" id="valAnimSpeed">1.0x</span>
+                    </div>
+                    <input type="range" id="sliderAnimSpeed" min="0.3" max="2.5" value="1.0" step="0.1" class="styled-range">
+                </div>
+
+                <div class="control-group" style="margin-bottom: 8px;">
+                    <div class="control-header">
+                        <label>Biên độ:</label>
+                        <span class="control-val" id="valAnimIntensity">1.0x</span>
+                    </div>
+                    <input type="range" id="sliderAnimIntensity" min="0.2" max="2.0" value="1.0" step="0.1" class="styled-range">
+                </div>
+
+                <div style="display: flex; gap: 8px; align-items: center; margin-top: 6px;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 11px; color: var(--text-secondary); font-weight: 600;">Thời lượng(s):</label>
+                        <select id="selectAnimDuration" class="anim-select" style="margin-top: 3px;">
+                            <option value="1.5">1.5s</option>
+                            <option value="2.0">2.0s (Loop)</option>
+                            <option value="3.0" selected>3.0s</option>
+                            <option value="4.0">4.0s</option>
+                            <option value="5.0">5.0s</option>
+                            <option value="8.0">8.0s</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 11px; color: var(--text-secondary); font-weight: 600;">FPS:</label>
+                        <select id="selectAnimFps" class="anim-select" style="margin-top: 3px;">
+                            <option value="12">12 FPS</option>
+                            <option value="24" selected>24 FPS</option>
+                            <option value="30">30 FPS</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+        </aside>
+
+        <!-- Right Panel: Interactive Pivot Rigging & Realtime Animation Stage -->
+        <section class="right-panel">
+
+            <!-- Topbar Canvas -->
+            <div class="canvas-topbar" style="flex-wrap: wrap; gap: 10px;">
+                <div class="canvas-title-group" style="flex-wrap: wrap; gap: 8px;">
+                    <span class="canvas-title">Sân khấu</span>
+
+                    <!-- Chuyển đổi chế độ Setup Rig vs Play Animation -->
+                    <div class="canvas-controls-pill">
+                        <button type="button" class="mode-btn active" id="btnAnimModeRig" title="Chế độ sắp xếp vị trí bộ phận và kéo đặt tâm xoay Pivot">
+                            🛠️ Đặt tâm Pivot
+                        </button>
+                        <button type="button" class="mode-btn" id="btnAnimModePlay" title="Chạy thử chuyển động nhân vật theo thời gian thực">
+                            ▶️ Chạy diễn hoạt
+                        </button>
+                    </div>
+
+                    <!-- Công cụ đặt Pivot nhanh bằng Click -->
+                    <button type="button" class="btn-click-pivot" id="btnClickToSetPivot" title="Khi bật: Click chuột vào bất kỳ vị trí nào trên bộ phận đang chọn để đặt ngay tâm Pivot tại đó!">
+                        🎯 Click để đặt Pivot: <strong id="valClickPivotState">TẮT</strong>
+                    </button>
+
+                    <label style="display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-secondary); cursor: pointer; user-select: none;">
+                        <input type="checkbox" id="checkShowPivots" checked>
+                        Hiện tâm Pivot & Khớp nối
+                    </label>
+
+                    <label style="display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-secondary); cursor: pointer; user-select: none;" title="Khi kéo bộ phận Cha (như Đầu hoặc Thân), các bộ phận Con gắn theo sẽ di chuyển cùng">
+                        <input type="checkbox" id="checkMoveChildrenWithParent" checked>
+                        Kéo Cha đi kèm Con
+                    </label>
+                </div>
+
+                <!-- Chọn màu nền sân khấu -->
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div class="anim-stage-bg-pills">
+                        <button type="button" class="stage-bg-btn active" data-bg="checker" title="Nền caro trong suốt">🏁 Caro</button>
+                        <button type="button" class="stage-bg-btn" data-bg="dark" title="Nền tối (#18181b)">🌑 Tối</button>
+                        <button type="button" class="stage-bg-btn" data-bg="green" title="Nền xanh lá Chroma Key (#00ff00)">🟩 Phông Xanh</button>
+                        <button type="button" class="stage-bg-btn" data-bg="white" title="Nền trắng (#ffffff)">⬜ Trắng</button>
+                    </div>
+                    <div class="canvas-stats" id="animCanvasStats" style="font-size: 11.5px; color: var(--text-muted);">
+                        Sẵn sàng
+                    </div>
+                </div>
+            </div>
+
+            <!-- Canvas Viewport (Không gian 2D Vô Tận) -->
+            <div class="canvas-viewport" id="animCanvasViewport">
+                <div id="animCanvasContainer" style="position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; background: transparent; pointer-events: none;">
+                    <canvas id="animStageCanvas" width="1280" height="800" style="display: block; width: 100%; height: 100%; pointer-events: auto;"></canvas>
+                </div>
+
+                <!-- Floating Zoom -->
+                <div class="floating-zoom">
+                    <button type="button" class="zoom-btn" id="btnAnimZoomOut">-</button>
+                    <button type="button" class="zoom-btn" id="btnAnimZoomReset">Fit</button>
+                    <button type="button" class="zoom-btn" id="btnAnimZoomIn">+</button>
+                </div>
+            </div>
+
+            <!-- Thanh Timeline điều khiển chạy / tua frame -->
+            <div class="anim-timeline-bar">
+                <button type="button" class="btn-timeline-play" id="btnAnimPlayToggle">
+                    ▶️ Chạy
+                </button>
+                <div class="timeline-scrubber-wrap">
+                    <input type="range" id="sliderAnimTimeline" min="0" max="3.0" value="0" step="0.02">
+                    <span class="timeline-time-label" id="valAnimTimelineLabel">0.00s / 3.00s (Frame 1)</span>
+                </div>
+            </div>
+
+            <!-- Bottom Action Bar -->
+            <div class="bottom-action-bar">
+                <div class="action-status-col">
+                    <div class="status-time">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>Tổng <strong id="valAnimActiveCount">0 layer</strong></span>
+                    </div>
+                    <span>•</span>
+                    <div class="folder-select-container">
+                        <span class="folder-title">📁 Lưu tại:</span>
+                        <div class="folder-display-box" title="Đường dẫn thư mục lưu file Animation">
+                            <input type="text" class="input-folder-path" id="inputFolderPathAnim" readonly />
+                            <button type="button" class="btn-browse-folder" id="btnBrowseFolderAnim">
+                                Đổi thư mục...
+                            </button>
+                            <button type="button" class="btn-reset-folder" id="btnResetFolderAnim" title="Khôi phục thư mục mặc định">
+                                ↺
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-export-primary" id="btnExportAnim">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Xuất animation
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- ========================================== -->
+    <!-- VIEW 5: VECTOR SVG RIG & ANIMATION STUDIO  -->
+    <!-- ========================================== -->
+    <main class="main-layout" id="svgAnimView" style="display: none;">
+
+        <!-- Left Panel: SVG Import, Pivot & Bone Hierarchy, Presets & Layers -->
+        <aside class="left-panel">
+
+            <!-- Card 1: Nguồn SVG Vector & Nạp nhanh Ví dụ -->
+            <section class="studio-card">
+                <div class="card-title-row">
+                    <span class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 19 21 12 17 5 21 12 2"></polygon>
+                        </svg>
+                        Nhập Nhân Vật
+                    </span>
+                    <span class="card-badge" id="svgAnimStatusBadge">Chờ nạp SVG</span>
+                </div>
+
+                <!-- Dropzone nạp file SVG -->
+                <div class="dropzone dropzone-inspect" id="dropzoneSvgAnim" style="padding: 14px 10px;">
+                    <input type="file" id="fileInputSvgAnim" accept=".svg" style="display: none;">
+                    <div class="dropzone-icon" style="margin-bottom: 4px;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <p style="font-size: 12.5px;">Kéo thả file nhân vật Vector SVG (.svg) vào đây</p>
+                    <span style="font-size: 11px;">Hỗ trợ cấu trúc xương &lt;g data-pivot="..."&gt; hoặc SVG phân lớp</span>
+                </div>
+
+                <!-- Nút nạp nhanh 2 nhân vật ví dụ từ thư mục example -->
+                <div class="anim-quick-import-row" style="display: flex; gap: 6px; margin-top: 8px;">
+                    <button type="button" class="btn-defringe-action" id="btnSvgLoadEx1" style="flex: 1; font-size: 11.5px; padding: 7px 8px; background: #f0fdf4; border-color: #86efac; color: #166534; font-weight: 600;" title="Nạp nhanh nhân vật Học sinh Nam (12 khớp xương, 3 trạng thái mắt, 3 trạng thái miệng)">
+                        ⚡ Ví dụ 1: Học sinh
+                    </button>
+                    <button type="button" class="btn-defringe-action" id="btnSvgLoadEx2" style="flex: 1; font-size: 11.5px; padding: 7px 8px; background: #faf5ff; border-color: #d8b4fe; color: #6b21a8; font-weight: 600;" title="Nạp nhanh nhân vật Ma Nữ (Váy dài, tóc xõa, mắt rỗng, miệng phẳng)">
+                        ⚡ Ví dụ 2: Ma nữ
+                    </button>
+                </div>
+
+                <!-- Nút lưu & mở thiết lập dự án SVG -->
+                <div class="anim-quick-import-row" style="display: flex; gap: 6px; margin-top: 6px;">
+                    <button type="button" class="btn-defringe-action" id="btnSaveSvgProject" style="flex: 1; font-size: 11.5px; padding: 7px 8px; font-weight: 600; background: #eff6ff; border-color: #93c5fd; color: #1d4ed8;" title="Lưu toàn bộ thiết lập khớp, tâm neo, vai trò ra file .spsvg để mở lại bất cứ lúc nào">
+                        💾 Lưu thiết lập
+                    </button>
+                    <button type="button" class="btn-defringe-action" id="btnOpenSvgProject" style="flex: 1; font-size: 11.5px; padding: 7px 8px; font-weight: 600; background: #f8fafc; border-color: #cbd5e1; color: #334155;" title="Mở file thiết lập .spsvg đã lưu trước đó">
+                        📂 Mở thiết lập
+                    </button>
+                    <input type="file" id="fileInputSvgProject" accept=".spsvg,.json" style="display: none;">
+                </div>
+            </section>
+
+            <!-- Hàng 2 Card nằm cạnh nhau: Card 2 (Điểm Neo & Khớp) và Card 4 (Danh Sách Layer & Cây Khớp) -->
+            <div class="anim-cards-side-by-side">
+
+                <!-- Card 2: Điểm Neo Pivot & Khớp Vector -->
+                <section class="studio-card" id="svgAnimPivotCard">
+                    <div class="card-title-row">
+                        <span class="card-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <line x1="12" y1="2" x2="12" y2="6"></line>
+                                <line x1="12" y1="18" x2="12" y2="22"></line>
+                                <line x1="2" y1="12" x2="6" y2="12"></line>
+                                <line x1="18" y1="12" x2="22" y2="12"></line>
+                            </svg>
+                            2. Điểm Neo Pivot & Khớp
+                        </span>
+                        <span class="card-badge" id="svgAnimSelectedBadge" style="max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Chưa chọn</span>
+                    </div>
+
+                    <!-- Khối thông tin bộ phận đang chọn -->
+                    <div class="target-layer-box" id="svgAnimTargetBox" style="margin-bottom: 8px;">
+                        <span class="target-dot"></span>
+                        <span id="svgAnimTargetName" style="font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Click bộ phận trên sân khấu hoặc danh sách</span>
+                    </div>
+
+                    <!-- Tọa độ Pivot X & Y -->
+                    <div class="anim-form-grid" style="margin-bottom: 8px;">
+                        <div class="anim-form-group">
+                            <label style="font-size: 11px;">Pivot X (px):</label>
+                            <input type="number" id="inputSvgPivotX" class="anim-select" style="padding: 4px 8px; font-size: 12px;" value="340" />
+                        </div>
+                        <div class="anim-form-group">
+                            <label style="font-size: 11px;">Pivot Y (px):</label>
+                            <input type="number" id="inputSvgPivotY" class="anim-select" style="padding: 4px 8px; font-size: 12px;" value="190" />
+                        </div>
+                    </div>
+
+                    <!-- Vai trò (Role) & Khớp Cha (Parent) -->
+                    <div class="anim-form-grid">
+                        <div class="anim-form-group">
+                            <label>Vai trò:</label>
+                            <select id="selectSvgAnimRole" class="anim-select">
+                                <optgroup label="── Thân & Đầu (Core) ──">
+                                    <option value="body">👕 Thân — [Body] (Khớp gốc)</option>
+                                    <option value="head">🙂 Đầu — [Head] (Pivot ở cổ)</option>
+                                    <option value="hair">💇 Tóc / Mái — [Hair]</option>
+                                    <option value="expression">🎭 Biểu cảm gộp — [Expression]</option>
+                                </optgroup>
+                                <optgroup label="── Cánh Tay 1 & 2 Khớp ──">
+                                    <option value="arm_left">💪 Tay trái nguyên — [Left Arm]</option>
+                                    <option value="arm_upper_left">🦾 Bắp tay trên Trái — [Left Upper Arm]</option>
+                                    <option value="arm_lower_left">🤜 Cẳng tay dưới Trái — [Left Lower Arm]</option>
+                                    <option value="arm_right">🤚 Tay phải nguyên — [Right Arm]</option>
+                                    <option value="arm_upper_right">🦾 Bắp tay trên Phải — [Right Upper Arm]</option>
+                                    <option value="arm_lower_right">🤛 Cẳng tay dưới Phải — [Right Lower Arm]</option>
+                                </optgroup>
+                                <optgroup label="── Chân 1 & 2 Khớp ──">
+                                    <option value="leg_left">🦵 Chân trái nguyên — [Left Leg]</option>
+                                    <option value="leg_upper_left">🦿 Đùi trên Trái — [Left Thigh]</option>
+                                    <option value="leg_lower_left">🦶 Bắp chuối/Bàn chân Trái — [Left Calf]</option>
+                                    <option value="foot_left">👟 Bàn chân Trái — [Left Foot]</option>
+                                    <option value="leg_right">🦵 Chân phải nguyên — [Right Leg]</option>
+                                    <option value="leg_upper_right">🦿 Đùi trên Phải — [Right Thigh]</option>
+                                    <option value="leg_lower_right">🦶 Bắp chuối/Bàn chân Phải — [Right Calf]</option>
+                                    <option value="foot_right">👟 Bàn chân Phải — [Right Foot]</option>
+                                </optgroup>
+                                <optgroup label="── Biểu Cảm Khuôn Mặt ──">
+                                    <option value="eye_open">👁️ Mắt mở (Bình thường)</option>
+                                    <option value="eye_closed">😌 Mắt nhắm (Chớp mắt)</option>
+                                    <option value="eye_extra">😳 Mắt mở to / sợ hãi</option>
+                                    <option value="mouth_closed">👄 Miệng ngậm (Nghỉ)</option>
+                                    <option value="mouth_half">😮 Miệng hé vừa (Nói)</option>
+                                    <option value="mouth_open">🗣️ Miệng mở to (Nói lớn/La hét)</option>
+                                </optgroup>
+                                <optgroup label="── Khác ──">
+                                    <option value="custom">✨ Bộ phận phụ / Tùy chỉnh</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="anim-form-group">
+                            <label>Khớp cha:</label>
+                            <select id="selectSvgAnimParent" class="anim-select">
+                                <option value="">(Không có - Khớp độc lập)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tỉ lệ Scale & Test Góc Xoay -->
+                    <div style="margin-top: 10px; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <div class="slider-control-row" style="margin-bottom: 6px;">
+                            <div class="slider-label-row">
+                                <span style="font-size: 11.5px; font-weight: 600; color: #334155;">Tỉ lệ:</span>
+                                <span class="slider-value-pill" id="valSvgLayerScale">1.00x</span>
+                            </div>
+                            <div style="display: flex; gap: 6px; align-items: center;">
+                                <input type="range" id="sliderSvgLayerScale" min="0.2" max="3.0" step="0.05" value="1.0" class="anim-range" style="flex: 1;" />
+                                <button type="button" id="btnResetSvgLayerScale" class="btn-text-action" style="padding: 2px 6px; font-size: 10px;" title="Reset về 1.0x">↺</button>
+                            </div>
+                        </div>
+
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Card 4: Danh Sách Layer & Khớp Vector -->
+                <section class="studio-card layer-list-card" id="svgAnimLayersCard">
+                    <div class="card-title-row">
+                        <span class="card-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                <polyline points="2 17 12 22 22 17"></polyline>
+                                <polyline points="2 12 12 17 22 12"></polyline>
+                            </svg>
+                            4. Cây Khớp & Bộ Phận
+                        </span>
+                        <span class="card-badge" id="svgAnimLayersCountBadge">0 khớp</span>
+                    </div>
+
+                    <div class="layer-list-actions" style="flex-wrap: wrap; gap: 4px;">
+                        <button type="button" class="btn-text-action" id="btnSvgShowAll">Hiện tất cả</button>
+                        <button type="button" class="btn-text-action" id="btnSvgHideAll">Ẩn tất cả</button>
+                        <button type="button" class="btn-text-action" id="btnSvgResetPivots" title="Khôi phục tâm Pivot mặc định từ SVG">↺ Pivot gốc</button>
+                    </div>
+
+                    <div class="inspect-layers-container" id="svgAnimLayersList">
+                        <div class="empty-parts-tip" id="svgAnimEmptyPlaceholder">
+                            Chưa có dữ liệu Vector SVG.<br>
+                            Hãy nhấn <strong>"⚡ Ví dụ 1: Học sinh"</strong> hoặc kéo thả file SVG vào để bắt đầu!
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Card 3: Kho Điệu Bộ Vector (18 Presets Funny Animation) -->
+            <section class="studio-card">
+                <div class="card-title-row">
+                    <span class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        Kho điệu bộ
+                    </span>
+                    <span class="card-badge" id="svgAnimActivePresetBadge">Đang chọn: Thở nhẹ</span>
+                </div>
+
+                <!-- Tabs danh mục điệu bộ -->
+                <div class="segmented-tabs" id="svgPresetCategoryTabs" style="margin-bottom: 10px;">
+                    <button class="tab-btn active" data-category="all">Tất cả (18)</button>
+                    <button class="tab-btn" data-category="basic">Cơ bản</button>
+                    <button class="tab-btn" data-category="action">Hành động</button>
+                    <button class="tab-btn" data-category="emotion">Cảm xúc</button>
+                </div>
+
+                <!-- Lưới danh thiếp 18 Preset điệu bộ -->
+                <div class="anim-preset-grid" id="svgPresetGrid">
+                    <!-- Dynamic preset cards -->
+                </div>
+
+                <!-- Thanh trượt Tốc độ & Biên độ chuyển động -->
+                <div style="margin-top: 12px; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                    <div class="slider-control-row" style="margin-bottom: 8px;">
+                        <div class="slider-label-row">
+                            <span style="font-size: 11.5px; font-weight: 600; color: #334155;">Tốc độ:</span>
+                            <span class="slider-value-pill" id="valSvgAnimSpeed">1.0x</span>
+                        </div>
+                        <input type="range" id="sliderSvgAnimSpeed" min="0.2" max="3.0" step="0.1" value="1.0" class="anim-range" />
+                    </div>
+
+                    <div class="slider-control-row" style="margin-bottom: 8px;">
+                        <div class="slider-label-row">
+                            <span style="font-size: 11.5px; font-weight: 600; color: #334155;">Biên độ:</span>
+                            <span class="slider-value-pill" id="valSvgAnimIntensity">100%</span>
+                        </div>
+                        <input type="range" id="sliderSvgAnimIntensity" min="0.1" max="2.0" step="0.05" value="1.0" class="anim-range" />
+                    </div>
+
+                    <!-- Tùy chọn chớp mắt, nhép miệng, nghiêng đầu -->
+                    <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px; border-top: 1px solid #e2e8f0; padding-top: 8px;">
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: #334155; cursor: pointer;">
+                            <input type="checkbox" id="checkSvgAutoBlink" checked />
+                            👁️ Tự động chớp mắt ngẫu nhiên (Auto-Blink)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: #334155; cursor: pointer;">
+                            <input type="checkbox" id="checkSvgLipSync" checked />
+                            👄 Tự động nhép miệng nói chuyện (Lip-Sync)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: #334155; cursor: pointer;">
+                            <input type="checkbox" id="checkSvgHeadSway" />
+                            🙂 Nghiêng đầu nhẹ nhàng tự nhiên (Head Sway)
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+        </aside>
+
+        <!-- Right Panel: Sân khấu Vector SVG tương tác -->
+        <section class="right-panel">
+
+            <!-- Topbar Canvas -->
+            <div class="canvas-topbar" style="flex-wrap: wrap; gap: 8px;">
+                <div class="canvas-title-group">
+                    <span class="canvas-title">Sân khấu</span>
+                    <div class="canvas-controls-pill">
+                        <button class="mode-btn" id="btnSvgModeRig">
+                            🔧 Khung Xương (Rig Mode)
+                        </button>
+                        <button class="mode-btn active" id="btnSvgModeAnim">
+                            ▶️ Xem Hoạt Họa (Animation)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Thanh điều khiển Timeline & Phát lại -->
+                <div class="anim-playback-bar" style="display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center; min-width: 280px;">
+                    <button type="button" class="btn-playback-ctrl" id="btnSvgPlayPause" title="Phát / Tạm dừng (Space)">
+                        <svg id="iconSvgPlay" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                    </button>
+                    <button type="button" class="btn-playback-ctrl" id="btnSvgResetTime" title="Về đầu chu kỳ (0s)">
+                        ⏮
+                    </button>
+                    <input type="range" id="sliderSvgTimeline" min="0" max="1000" value="0" class="anim-range" style="flex: 1; max-width: 220px;" />
+                    <span id="valSvgTimeDisplay" style="font-size: 11.5px; font-weight: 600; color: var(--text-secondary); min-width: 65px;">0.00s</span>
+                </div>
+
+                <!-- Tùy chọn nền & Hiển thị xương -->
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label style="display: flex; align-items: center; gap: 4px; font-size: 11.5px; color: var(--text-muted); cursor: pointer;">
+                        <input type="checkbox" id="checkSvgShowPivots" checked /> Hiện xương & Pivot
+                    </label>
+                    <select id="selectSvgBgMode" class="anim-select" style="font-size: 11.5px; padding: 3px 6px;">
+                        <option value="dark">Nền Tối (#1e293b)</option>
+                        <option value="grid">Lưới Caro</option>
+                        <option value="white">Nền Trắng</option>
+                        <option value="transparent">Trong Suốt</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Viewport Sân khấu Vector SVG -->
+            <div class="canvas-viewport" id="svgStageViewport" style="background: #1e293b; overflow: hidden; position: relative;">
+                <div id="svgStageContainer" style="position: absolute; transform-origin: 0 0; user-select: none; overflow: visible;">
+                    <!-- Rendered SVG Content Injected Here -->
+                    <div id="svgStageWrapper" style="position: relative; display: inline-block; overflow: visible;"></div>
+                    <!-- Overlay SVG for Pivot Handles & Bone Lines -->
+                    <svg id="svgRigOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; overflow: visible;"></svg>
+                </div>
+
+                <!-- Zoom nổi -->
+                <div class="floating-zoom">
+                    <button class="zoom-btn" id="btnSvgZoomOut" title="Thu nhỏ (Ctrl -)">-</button>
+                    <button class="zoom-btn" id="btnSvgZoomReset" title="Vừa khung hình (Fit)">Fit</button>
+                    <button class="zoom-btn" id="btnSvgZoomIn" title="Phóng to (Ctrl +)">+</button>
+                </div>
+            </div>
+
+            <!-- Bottom Actions Bar: Xuất định dạng đa nền tảng -->
+            <div class="anim-bottom-action-bar" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 16px; background: #ffffff; border-top: 1px solid #e2e8f0; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 12px; font-weight: 600; color: #334155;">Định dạng xuất:</span>
+                    <button type="button" class="btn-defringe-action" id="btnSvgExportAnimatedSvg" style="font-weight: 600; background: #f0fdf4; border-color: #86efac; color: #166534;" title="Xuất file .svg độc lập có nhúng CSS @keyframes chuyển động, chạy trực tiếp trên web không cần JavaScript!">
+                        🌐 Xuất File SVG Hoạt Họa (.svg)
+                    </button>
+                    <button type="button" class="btn-defringe-action" id="btnSvgExportGif" style="font-weight: 600; background: #eff6ff; border-color: #93c5fd; color: #1d4ed8;" title="Xuất ảnh động GIF nền trong suốt">
+                        🎞️ Xuất GIF
+                    </button>
+                    <button type="button" class="btn-defringe-action" id="btnSvgExportMp4" style="font-weight: 600; background: #fff7ed; border-color: #fed7aa; color: #c2410c;" title="Xuất video MP4">
+                        🎬 Xuất Video MP4
+                    </button>
+                    <button type="button" class="btn-defringe-action" id="btnSvgExportPng" style="font-weight: 600; background: #faf5ff; border-color: #e9d5ff; color: #7e22ce;" title="Xuất chuỗi ảnh PNG sắc nét (frame_0001.png, ...)">
+                        🖼️ Xuất Chuỗi PNG
+                    </button>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 6px; margin-right: 8px;">
+                        <label style="font-size: 11.5px; font-weight: 600; color: #475569;">Thời lượng:</label>
+                        <select id="selectSvgExportDuration" class="anim-select" style="font-size: 11.5px; padding: 4px 8px;">
+                            <option value="1.5">1.5s</option>
+                            <option value="2.0">2.0s</option>
+                            <option value="2.4" selected>2.4s (Chuẩn)</option>
+                            <option value="3.0">3.0s</option>
+                            <option value="4.0">4.0s</option>
+                            <option value="5.0">5.0s</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn-export-primary" id="btnSvgExportFunnyPackage"  style="font-size: 12px; padding: 7px 14px;" title="Xuất trọn gói dự án và nạp vào Paul To Animation">
+                        📦 Xuất Gói Paul To Animation
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Modal Kết quả Xuất PSD & PNG -->
+    <div class="modal-backdrop" id="exportModal">
+        <div class="modal-box">
+            <div class="modal-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h2>Đã bóc tách & Xuất file thành công!</h2>
+            <p id="modalSummary">Tất cả các bộ phận đã được lưu thành từng file PNG nền trong suốt và 1 file PSD đầy đủ layer.</p>
+            
+            <div class="modal-actions">
+                <button class="btn-modal-open" id="btnOpenFolder">
+                    📁 Mở thư mục chứa file trên máy
+                </button>
+                <button class="btn-modal-download" id="btnDownloadPsd">
+                    🎨 Tải File Photoshop (.PSD)
+                </button>
+                <button class="btn-modal-download" id="btnDownloadZip">
+                    📦 Tải Gói Toàn Bộ (.ZIP)
+                </button>
+                <button class="btn-modal-close" id="btnCloseModal">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+    <script src="/static/svg_studio.js"></script>
+</body>
+</html>
