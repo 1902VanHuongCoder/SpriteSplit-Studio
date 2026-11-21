@@ -61,6 +61,15 @@
                 </svg>
                 5. Tạo Animation (Vector SVG)
             </button>
+            <button class="studio-nav-btn" id="btnNavUniversalAction">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="5" r="3"></circle>
+                    <path d="M12 8v8"></path>
+                    <path d="M8 12l4-2 4 2"></path>
+                    <path d="M9 21l3-5 3 5"></path>
+                </svg>
+                6. Universal Action Studio
+            </button>
         </div>
 
     </header>
@@ -1551,6 +1560,332 @@
     </main>
 
 
+    <!-- ========================================== -->
+    <!-- VIEW 6: UNIVERSAL ACTION & POSE STUDIO     -->
+    <!-- ========================================== -->
+    <main class="main-layout" id="universalActionView" style="display: none;">
+
+        <!-- Left Panel: Khung Quản Lý Danh Mục Hành Động (Action Suite Sidebar) -->
+        <aside class="left-panel action-studio-sidebar" style="width: 320px; flex-shrink: 0;">
+
+            <!-- Card 1: Quản lý danh sách hành động -->
+            <section class="studio-card" style="display: flex; flex-direction: column; height: 100%; max-height: calc(100vh - 90px);">
+                <div class="card-title-row">
+                    <span class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="5" r="3"></circle>
+                            <path d="M12 8v8"></path>
+                            <path d="M8 12l4-2 4 2"></path>
+                            <path d="M9 21l3-5 3 5"></path>
+                        </svg>
+                        Thư Viện Hành Động
+                    </span>
+                    <span class="card-badge" id="actionCountBadge">8 hành động</span>
+                </div>
+
+                <!-- Thanh tìm kiếm & Nút thêm hành động mới -->
+                <div style="display: flex; gap: 6px; margin: 8px 0;">
+                    <div style="flex: 1; position: relative;">
+                        <input type="text" id="inputSearchActions" class="action-search-input" placeholder="🔍 Tìm hành động (ngồi, đứng, đi...)" />
+                    </div>
+                    <button type="button" class="btn-export-primary" id="btnAddActionModal" style="padding: 6px 10px; font-size: 11.5px; white-space: nowrap;" title="Tạo hành động mới vào thư viện">
+                        + Thêm Mới
+                    </button>
+                </div>
+
+                <!-- Bộ lọc loại hành động -->
+                <div class="action-filter-tabs">
+                    <button type="button" class="btn-filter-action-type active" data-type="all">Tất cả</button>
+                    <button type="button" class="btn-filter-action-type" data-type="static">🧘 Tư thế Tĩnh</button>
+                    <button type="button" class="btn-filter-action-type" data-type="cycle">🏃 Chu kỳ Lặp</button>
+                </div>
+
+                <!-- Danh sách hành động có thanh cuộn mượt -->
+                <div class="action-sidebar-list-wrap" style="flex: 1; overflow-y: auto; margin-top: 8px; padding-right: 2px;">
+                    <div id="actionSidebarList" class="action-sidebar-list"></div>
+                </div>
+
+                <!-- Thanh công cụ nhập xuất JSON cuối Sidebar -->
+                <div class="action-sidebar-bottom-bar" style="display: flex; gap: 6px; padding-top: 10px; border-top: 1px solid #e2e8f0; margin-top: 8px;">
+                    <button type="button" class="btn-defringe-action" id="btnExportUniversalActions" style="flex: 1; font-weight: 600; background: #fff7ed; border-color: #fed7aa; color: #c2410c; padding: 7px 4px; font-size: 11.5px;" title="Xuất toàn bộ bộ hành động thành tệp JSON chuẩn hóa (universal_actions.json) dùng chung cho Remotion">
+                        📤 Xuất File JSON
+                    </button>
+                    <button type="button" class="btn-defringe-action" id="btnImportUniversalActions" style="flex: 1; font-weight: 600; background: #f0fdf4; border-color: #86efac; color: #166534; padding: 7px 4px; font-size: 11.5px;" title="Nạp thư viện hành động từ file JSON có sẵn trên máy">
+                        📥 Nạp File JSON
+                    </button>
+                    <input type="file" id="fileImportUniversalActions" accept=".json" style="display: none;" />
+                </div>
+            </section>
+
+        </aside>
+
+        <!-- Center Panel: Viewport Canvas 400x1000 & Timeline Hoạt Họa -->
+        <section class="right-panel action-studio-center-panel" style="display: flex; flex-direction: column; flex: 1; position: relative;">
+
+            <!-- Topbar Canvas -->
+            <div class="canvas-topbar" style="flex-wrap: wrap; gap: 8px;">
+                <div class="canvas-title-group" style="display: flex; align-items: center; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span class="canvas-title" id="activeActionDisplayTitle">Đứng tự nhiên (Standing)</span>
+                        <span class="badge-action-type static" id="activeActionDisplayBadge">Tư thế Tĩnh</span>
+                    </div>
+                    <span class="card-badge" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; font-size: 11px;">Hệ quy chiếu 400×1000</span>
+                    
+                    <!-- Bộ chuyển công cụ Gizmo: Xoay vs Co Giãn Scale -->
+                    <div class="canvas-controls-pill" style="margin-left: 6px;">
+                        <button type="button" class="mode-btn active" id="btnGizmoToolRotate" title="Chế độ Xoay quanh tâm neo (Phím tắt: R)">
+                            🔄 Xoay
+                        </button>
+                        <button type="button" class="mode-btn" id="btnGizmoToolScale" title="Chế độ Co Giãn Scale phập phồng / nhún (Phím tắt: S)">
+                            📏 Co Giãn (Scale)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tùy chọn hiển thị & Nền -->
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <label style="display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: #334155; cursor: pointer;">
+                        <input type="checkbox" id="checkShowActionGizmos" checked /> Hiện Gizmo xoay trực tiếp
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <span style="font-size: 11.5px; color: var(--text-muted);">Nền:</span>
+                        <select id="selectActionBgMode" class="anim-select" style="font-size: 11.5px; padding: 3px 6px;">
+                            <option value="dark" selected>Nền Tối (#0f172a)</option>
+                            <option value="grid">Lưới Phòng Studio</option>
+                            <option value="light">Nền Sáng (#f8fafc)</option>
+                            <option value="transparent">Trong suốt</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Viewport Búp Bê Tương Tác Trực Tiếp -->
+            <div class="action-stage-viewport bg-dark" id="actionStageViewport" style="flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                <div id="actionPuppetSvgWrapper" class="action-puppet-wrapper"></div>
+
+                <!-- Zoom nổi -->
+                <div class="floating-zoom">
+                    <button class="zoom-btn" id="btnActionZoomOut" title="Thu nhỏ">-</button>
+                    <button class="zoom-btn" id="btnActionZoomReset" title="Vừa khung hình (Fit)">Fit</button>
+                    <button class="zoom-btn" id="btnActionZoomIn" title="Phóng to">+</button>
+                </div>
+            </div>
+
+            <!-- Timeline Keyframes (Chỉ kích hoạt / hiển thị khi chọn Motion Cycle) -->
+            <div class="action-timeline-bar" id="actionTimelineBar" style="display: none;">
+                
+                <!-- Hàng 1: Thanh Công Cụ Điều Khiển (Play, Add/Delete Keyframe, Easing, Duration) -->
+                <div class="action-timeline-toolbar">
+                    <div class="timeline-controls-left">
+                        <button type="button" class="btn-playback-ctrl" id="btnActionRewind" title="Về đầu chu kỳ (0ms)">
+                            ⏮
+                        </button>
+                        <button type="button" class="btn-playback-ctrl" id="btnActionPrevKf" title="Nhảy về Keyframe trước">
+                            ◀
+                        </button>
+                        <button type="button" class="btn-playback-ctrl" id="btnActionPlayPause" title="Phát / Dừng chuyển động lặp (Space)">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                        </button>
+                        <button type="button" class="btn-playback-ctrl" id="btnActionNextKf" title="Nhảy tới Keyframe kế tiếp">
+                            ▶
+                        </button>
+                        <div class="timeline-time-box">
+                            <span id="valTimelineCurrentTime">0.00s</span> / <span id="valTimelineTotalDuration">1.50s</span>
+                        </div>
+                    </div>
+
+                    <div class="timeline-controls-right">
+                        <button type="button" class="btn-defringe-action" id="btnAddKeyframe" style="font-size: 11.5px; padding: 5px 12px; background: #eff6ff; border-color: #93c5fd; color: #1d4ed8; font-weight: 600;" title="Thêm điểm Keyframe lưu các góc hiện tại vào mốc thời gian này">
+                            + Thêm Keyframe
+                        </button>
+                        <button type="button" class="btn-defringe-action" id="btnDeleteKeyframe" style="font-size: 11.5px; padding: 5px 10px; background: #fef2f2; border-color: #fecaca; color: #b91c1c; font-weight: 600;" title="Xóa Keyframe đang chọn">
+                            🗑️ Xóa Keyframe
+                        </button>
+                        <div style="display: flex; align-items: center; gap: 5px; margin-left: 4px;">
+                            <span style="font-size: 11.5px; font-weight: 600; color: #475569;">Easing:</span>
+                            <select id="selectKeyframeEasing" class="anim-select" style="font-size: 11.5px; padding: 4px 8px;">
+                                <option value="easeInOut">easeInOut (Mượt cả 2 đầu)</option>
+                                <option value="linear">linear (Đều đặn)</option>
+                                <option value="easeIn">easeIn (Nhanh dần)</option>
+                                <option value="easeOut">easeOut (Chậm dần)</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 5px; margin-left: 4px;">
+                            <span style="font-size: 11.5px; font-weight: 600; color: #475569;">Thời lượng:</span>
+                            <input type="number" id="inputCycleDuration" class="action-num-input" style="width: 64px; padding: 3px 6px; font-size: 11.5px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px;" min="200" max="10000" step="100" value="1500" />
+                            <span style="font-size: 11px; color: var(--text-muted);">ms</span>
+                        </div>
+                        <label style="display: flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 600; color: #334155; cursor: pointer; margin-left: 6px;">
+                            <input type="checkbox" id="checkCycleLoop" checked /> Lặp lại (Loop)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Hàng 2: Dải Timeline Toàn Chiều Rộng (100% Full Width) Rộng Rãi Dễ Kéo -->
+                <div class="action-timeline-track-row">
+                    <div class="timeline-ruler-labels">
+                        <span>0% (0ms)</span>
+                        <span>25%</span>
+                        <span>50%</span>
+                        <span>75%</span>
+                        <span id="valRulerEndDuration">100% (1500ms)</span>
+                    </div>
+                    <div class="timeline-track-wrap" id="actionTimelineTrack" title="Nhấp hoặc kéo chuột để di chuyển mốc thời gian">
+                        <div class="timeline-track-line"></div>
+                        <div id="timelineKeyframeMarkers" class="timeline-kf-markers-layer"></div>
+                        <div id="timelineScrubberThumb" class="timeline-scrubber-thumb">
+                            <div class="timeline-scrubber-head"></div>
+                            <div class="timeline-scrubber-line"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Right Panel: Bảng Thanh Trượt Góc Độ (Joint Rotation Sliders) -->
+        <aside class="left-panel action-studio-sliders-panel" style="width: 330px; flex-shrink: 0;">
+
+            <section class="studio-card" style="display: flex; flex-direction: column; height: 100%; max-height: calc(100vh - 90px);">
+                <div class="card-title-row">
+                    <span class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="4" y1="21" x2="4" y2="14"></line>
+                            <line x1="4" y1="10" x2="4" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12" y2="3"></line>
+                            <line x1="20" y1="21" x2="20" y2="16"></line>
+                            <line x1="20" y1="12" x2="20" y2="3"></line>
+                            <line x1="1" y1="14" x2="7" y2="14"></line>
+                            <line x1="9" y1="8" x2="15" y2="8"></line>
+                            <line x1="17" y1="16" x2="23" y2="16"></line>
+                        </svg>
+                        Khớp & Góc Xoay / Scale
+                    </span>
+                    <span class="card-badge" style="background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0;">15 Khớp</span>
+                </div>
+
+                <!-- Chuyển Tab chế độ điều khiển: Xoay, Co Giãn (Scale), hoặc Cả Hai -->
+                <div class="action-control-mode-tabs" style="display: flex; gap: 4px; margin: 8px 0 6px 0; background: #f1f5f9; padding: 3px; border-radius: 8px;">
+                    <button type="button" class="btn-ctrl-mode active" id="btnModeRotateTab" data-mode="rotate" style="flex: 1; border: none; background: #ffffff; padding: 5px 6px; font-size: 11.5px; font-weight: 600; border-radius: 6px; color: var(--orange-primary); cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+                        🔄 Góc Xoay
+                    </button>
+                    <button type="button" class="btn-ctrl-mode" id="btnModeScaleTab" data-mode="scale" style="flex: 1; border: none; background: transparent; padding: 5px 6px; font-size: 11.5px; font-weight: 600; border-radius: 6px; color: var(--text-secondary); cursor: pointer;">
+                        📏 Co Giãn (Scale)
+                    </button>
+                    <button type="button" class="btn-ctrl-mode" id="btnModeAllTab" data-mode="all" style="flex: 1; border: none; background: transparent; padding: 5px 6px; font-size: 11.5px; font-weight: 600; border-radius: 6px; color: var(--text-secondary); cursor: pointer;">
+                        ✨ Cả Hai
+                    </button>
+                </div>
+
+                <!-- Nhóm phím tắt tư thế xoay nhanh -->
+                <div class="quick-pose-toolbar" id="quickRotateToolbar">
+                    <button type="button" class="btn-quick-pose" id="btnQuickResetZero" title="Reset tất cả các khớp về 0°">0° Reset</button>
+                    <button type="button" class="btn-quick-pose" id="btnQuickTPose" title="Tư thế chữ T (T-Pose chuẩn để rig)">T-Pose</button>
+                    <button type="button" class="btn-quick-pose" id="btnQuickStanding" title="Tư thế đứng thẳng tự nhiên">Đứng Thẳng</button>
+                    <button type="button" class="btn-quick-pose" id="btnQuickMirrorL2R" title="Sao chép tư thế tay & chân Trái sang Phải">Lật T ➔ P</button>
+                    <button type="button" class="btn-quick-pose" id="btnQuickMirrorR2L" title="Sao chép tư thế tay & chân Phải sang Trái">Lật P ➔ T</button>
+                    <button type="button" class="btn-quick-pose" id="btnQuickInvert" title="Đảo chiều toàn bộ góc khớp">Đảo Chiều</button>
+                </div>
+
+                <!-- Nhóm phím tắt co giãn Scale nhanh (Thở phập phồng, Nhún, Vươn) -->
+                <div class="quick-pose-toolbar" id="quickScaleToolbar" style="display: none;">
+                    <button type="button" class="btn-quick-pose" id="btnQuickScaleReset" title="Reset toàn bộ scale về 1.0x chuẩn">1.0x Chuẩn</button>
+                    <button type="button" class="btn-quick-pose" id="btnQuickScaleBreathe" title="Phồng ngực thân người (Thở vào +8%)">🫁 Thở Vào</button>
+                    <button type="button" class="btn-quick-pose" id="btnQuickScaleSquash" title="Nhún lùn xuống, bè ngang (Squash)">🧎 Nhún Xuống</button>
+                    <button type="button" class="btn-quick-pose" id="btnQuickScaleStretch" title="Vươn cao người, thon gọn (Stretch)">🧍 Vươn Cao</button>
+                    <button type="button" class="btn-quick-pose" id="btnQuickScaleBigger" title="Phóng to toàn bộ cơ thể 1.1x">🔍 To 1.1x</button>
+                    <button type="button" class="btn-quick-pose" id="btnQuickScaleSmaller" title="Thu nhỏ toàn bộ cơ thể 0.9x">🔎 Nhỏ 0.9x</button>
+                </div>
+
+                <!-- Bảng 15 thanh trượt góc xoay có scroll mượt -->
+                <div class="action-sliders-scroll-wrap" style="flex: 1; overflow-y: auto; margin-top: 8px; padding-right: 2px;">
+                    <div id="actionSlidersContainer" class="action-sliders-container"></div>
+                </div>
+            </section>
+
+        </aside>
+
+    </main>
+
+
+    <!-- Modal 1: Thêm Hành Động Mới -->
+    <div class="modal-backdrop modal-backdrop-generic" id="modalAddAction" style="display: none;">
+        <div class="modal-box" style="max-width: 440px; text-align: left;">
+            <h2 style="font-size: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <span>✨</span> Thêm Hành Động Mới
+            </h2>
+            
+            <div style="margin-bottom: 10px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Action ID (kebab-case / snake_case):</label>
+                <input type="text" id="inputNewActionId" class="action-search-input" placeholder="ví dụ: holding_shield, bow_greeting" style="width: 100%;" />
+                <span style="font-size: 11px; color: var(--text-muted);">Mã định danh duy nhất dùng trong Storyboard & Remotion</span>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Tên hiển thị tiếng Việt:</label>
+                <input type="text" id="inputNewActionName" class="action-search-input" placeholder="ví dụ: Cầm khiên phòng thủ, Cúi chào" style="width: 100%;" />
+            </div>
+
+            <div style="margin-bottom: 12px; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 6px;">Loại hành động:</label>
+                <div style="display: flex; gap: 14px;">
+                    <label style="display: flex; align-items: center; gap: 5px; font-size: 12.5px; cursor: pointer;">
+                        <input type="radio" name="newActionType" value="static" checked /> 🧘 Tư thế Tĩnh (Static Pose)
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px; font-size: 12.5px; cursor: pointer;">
+                        <input type="radio" name="newActionType" value="cycle" /> 🏃 Chu kỳ Lặp (Motion Cycle)
+                    </label>
+                </div>
+            </div>
+
+            <div id="newActionDurationRow" style="display: none; margin-bottom: 12px; align-items: center; gap: 8px;">
+                <label style="font-size: 12px; font-weight: 600; color: #334155;">Thời lượng chu kỳ (ms):</label>
+                <input type="number" id="inputNewActionDuration" class="action-num-input" style="width: 80px;" value="1500" min="200" max="10000" step="100" />
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Khởi tạo tư thế ban đầu từ:</label>
+                <div style="display: flex; flex-direction: column; gap: 4px; font-size: 12px;">
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                        <input type="radio" name="newActionBasePose" value="current" checked /> Giữ nguyên tư thế hiện tại trên sân khấu
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                        <input type="radio" name="newActionBasePose" value="standing" /> Tư thế Đứng Thẳng chuẩn (Standing)
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                        <input type="radio" name="newActionBasePose" value="zero" /> Tất cả khớp về 0°
+                    </label>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+                <button type="button" class="btn-modal-close-generic" style="padding: 7px 14px; font-size: 12.5px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer;">Hủy bỏ</button>
+                <button type="button" class="btn-export-primary" id="btnConfirmCreateAction" style="padding: 7px 16px; font-size: 12.5px;">Tạo Hành Động</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Đổi Tên Hành Động -->
+    <div class="modal-backdrop modal-backdrop-generic" id="modalRenameAction" style="display: none;">
+        <div class="modal-box" style="max-width: 400px; text-align: left;">
+            <h2 style="font-size: 16px; margin-bottom: 12px;">✏️ Đổi Tên Hành Động</h2>
+            <input type="hidden" id="inputRenameActionId" />
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Tên hiển thị mới:</label>
+                <input type="text" id="inputRenameActionName" class="action-search-input" style="width: 100%;" />
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                <button type="button" class="btn-modal-close-generic" style="padding: 7px 14px; font-size: 12.5px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer;">Hủy</button>
+                <button type="button" class="btn-export-primary" id="btnConfirmRenameAction" style="padding: 7px 16px; font-size: 12.5px;">Lưu Thay Đổi</button>
+            </div>
+        </div>
+    </div>
+
+
     <!-- Modal Kết quả Xuất PSD & PNG -->
     <div class="modal-backdrop" id="exportModal">
         <div class="modal-box">
@@ -1579,5 +1914,6 @@
 
     <script src="/static/app.js"></script>
     <script src="/static/svg_studio.js"></script>
+    <script src="/static/action_studio.js"></script>
 </body>
 </html>

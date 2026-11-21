@@ -6,6 +6,7 @@ import subprocess
 import asyncio
 import base64
 import zipfile
+import json
 import uvicorn
 import numpy as np
 from fastapi import FastAPI, UploadFile, File, Form, Request, HTTPException
@@ -788,6 +789,45 @@ async def api_upload_svg_rig(file: UploadFile = File(...)):
         "filename": file.filename,
         "svg_content": svg_text
     }
+
+
+UNIVERSAL_ACTIONS_PATH = os.path.join(BASE_DIR, "universal_actions.json")
+
+@app.get("/api/universal-actions")
+async def api_get_universal_actions():
+    """Lấy danh mục thư viện hành động universal_actions.json"""
+    if os.path.exists(UNIVERSAL_ACTIONS_PATH):
+        try:
+            with open(UNIVERSAL_ACTIONS_PATH, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            print("Lỗi khi đọc universal_actions.json:", e)
+    return {"status": "not_found", "actions": {}}
+
+
+@app.post("/api/universal-actions")
+async def api_save_universal_actions(req: Request):
+    """Lưu danh mục hành động universal_actions.json vào server"""
+    try:
+        data = await req.json()
+        with open(UNIVERSAL_ACTIONS_PATH, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+
+        # Lưu thêm một bản vào output để tiện người dùng mở/copy
+        try:
+            out_actions = os.path.join(OUTPUT_DIR, "universal_actions.json")
+            with open(out_actions, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+        except Exception:
+            pass
+
+        return {
+            "status": "success",
+            "path": os.path.abspath(UNIVERSAL_ACTIONS_PATH),
+            "output_path": os.path.abspath(os.path.join(OUTPUT_DIR, "universal_actions.json"))
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":

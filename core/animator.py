@@ -2298,22 +2298,24 @@ def export_funny_animation_package(
         lid = lyr["id"]
         pid = lyr.get("parent_id")
         role = lyr.get("role", "custom")
-        if pid is not None and pid in fk_layer_map and pid != lid:
+        # Luôn ưu tiên chuẩn quan hệ giải phẫu học (Semantic Anatomy Kinematics):
+        # Cẳng tay/bắp chân/bàn chân BẮT BUỘC gắn vào cánh tay trên/đùi, không gắn vào Thân (Body)
+        if role == "arm_lower_left" and fk_uarm_l_id and lid != fk_uarm_l_id:
+            fk_parent_ids[lid] = fk_uarm_l_id
+        elif role == "arm_lower_right" and fk_uarm_r_id and lid != fk_uarm_r_id:
+            fk_parent_ids[lid] = fk_uarm_r_id
+        elif role in ("leg_calf_left", "leg_lower_left") and fk_thigh_l_id and lid != fk_thigh_l_id:
+            fk_parent_ids[lid] = fk_thigh_l_id
+        elif role in ("leg_calf_right", "leg_lower_right") and fk_thigh_r_id and lid != fk_thigh_r_id:
+            fk_parent_ids[lid] = fk_thigh_r_id
+        elif role == "foot_left" and (fk_calf_l_id or fk_thigh_l_id) and lid not in (fk_calf_l_id, fk_thigh_l_id):
+            fk_parent_ids[lid] = fk_calf_l_id or fk_thigh_l_id
+        elif role == "foot_right" and (fk_calf_r_id or fk_thigh_r_id) and lid not in (fk_calf_r_id, fk_thigh_r_id):
+            fk_parent_ids[lid] = fk_calf_r_id or fk_thigh_r_id
+        elif pid is not None and pid in fk_layer_map and pid != lid:
             fk_parent_ids[lid] = pid
         else:
-            if role == "arm_lower_left" and (fk_uarm_l_id or fk_body_id):
-                fk_parent_ids[lid] = fk_uarm_l_id or fk_body_id
-            elif role == "arm_lower_right" and (fk_uarm_r_id or fk_body_id):
-                fk_parent_ids[lid] = fk_uarm_r_id or fk_body_id
-            elif role in ("leg_calf_left", "leg_lower_left") and (fk_thigh_l_id or fk_body_id):
-                fk_parent_ids[lid] = fk_thigh_l_id or fk_body_id
-            elif role in ("leg_calf_right", "leg_lower_right") and (fk_thigh_r_id or fk_body_id):
-                fk_parent_ids[lid] = fk_thigh_r_id or fk_body_id
-            elif role == "foot_left" and (fk_calf_l_id or fk_thigh_l_id or fk_body_id):
-                fk_parent_ids[lid] = fk_calf_l_id or fk_thigh_l_id or fk_body_id
-            elif role == "foot_right" and (fk_calf_r_id or fk_thigh_r_id or fk_body_id):
-                fk_parent_ids[lid] = fk_calf_r_id or fk_thigh_r_id or fk_body_id
-            elif role in ("head", "arm_left", "arm_right", "arm_upper_left", "arm_upper_right", "leg_left", "leg_right", "leg_thigh_left", "leg_thigh_right", "leg_upper_left", "leg_upper_right") and fk_body_id and lid != fk_body_id:
+            if role in ("head", "arm_left", "arm_right", "arm_upper_left", "arm_upper_right", "leg_left", "leg_right", "leg_thigh_left", "leg_thigh_right", "leg_upper_left", "leg_upper_right") and fk_body_id and lid != fk_body_id:
                 fk_parent_ids[lid] = fk_body_id
             elif role in ("face", "expression", "eye_open", "eye_closed", "eye_extra", "mouth_closed", "mouth_half", "mouth_open", "mouth_extra", "hair", "head_prop") and fk_head_id and lid != fk_head_id:
                 fk_parent_ids[lid] = fk_head_id
@@ -2833,15 +2835,24 @@ def export_funny_animation_package(
         safe_slug = sanitize_filename(raw_n) or f"part_{idx_lyr + 1}"
         fname_val = f"{idx_lyr + 1:02d}_{safe_slug}.png"
         part_rel_p = f"{char_asset_rel_dir}/{fname_val}"
-        src_img = decoded_images.get(lid_val)
-        if src_img is not None and src_img.size > 0:
-            buf = io.BytesIO()
-            Image.fromarray(src_img, "RGBA").save(buf, format="PNG")
-            b64_val = base64.b64encode(buf.getvalue()).decode("ascii")
+        raw_img_str = lyr_item.get("image", "")
+        if raw_img_str:
+            if not raw_img_str.startswith("data:"):
+                raw_img_str = f"data:image/png;base64,{raw_img_str}"
             character_asset_list.append({
                 "path": part_rel_p,
-                "data": f"data:image/png;base64,{b64_val}"
+                "data": raw_img_str
             })
+        else:
+            src_img = decoded_images.get(lid_val)
+            if src_img is not None and src_img.size > 0:
+                buf = io.BytesIO()
+                Image.fromarray(src_img, "RGBA").save(buf, format="PNG")
+                b64_val = base64.b64encode(buf.getvalue()).decode("ascii")
+                character_asset_list.append({
+                    "path": part_rel_p,
+                    "data": f"data:image/png;base64,{b64_val}"
+                })
 
     # Thumbnail asset
     if thumbnail_rgba is not None and thumbnail_rgba.size > 0:
@@ -2882,7 +2893,7 @@ def export_funny_animation_package(
 
     # Đóng gói toàn bộ thư mục funny_animation_project thành gói `<safe_base>_funny_animation.paulto`
     paulto_path = os.path.join(output_dir, f"{safe_base}_funny_animation.paulto")
-    with zipfile.ZipFile(paulto_path, "w", zipfile.ZIP_DEFLATED) as zf:
+    with zipfile.ZipFile(paulto_path, "w", zipfile.ZIP_STORED) as zf:
         for root_dir, _, files in os.walk(proj_dir):
             for file_item in files:
                 abs_f = os.path.join(root_dir, file_item)
@@ -2969,116 +2980,24 @@ def export_character_animation(
     else:
         render_layers = layers
 
-    frames_rgba = []
-    png_files = []
+    # Tối ưu hóa siêu tốc: Chỉ render 1 frame (t=0.0) làm thumbnail thay vì render hàng chục frame PNG/GIF/MP4
+    thumbnail_frame = None
+    try:
+        thumbnail_frame = render_animation_frame(render_layers, decoded_images, canvas_w, canvas_h, 0.0, anim_cfg)
+    except Exception as e:
+        print(f"Thumbnail render notice: {e}")
 
-    for idx in range(total_frames):
-        t = idx / float(fps)
-        frame = render_animation_frame(render_layers, decoded_images, canvas_w, canvas_h, t, anim_cfg)
-        frames_rgba.append(frame)
-
-        frame_fname = f"frame_{idx + 1:04d}.png"
-        frame_path = os.path.join(seq_dir, frame_fname)
-        Image.fromarray(frame, "RGBA").save(frame_path, format="PNG")
-        png_files.append(frame_path)
-
-    # 0. Xuất gói dự án chuẩn cho "Funny Animation Assistant" (.anime + .paulto + config.json)
+    # 0. Xuất trọn bộ dự án chuẩn cho Paul To Animation / Funny Animation Assistant (.character.json, .paulto, .anime, config.json)
     funny_pkg = export_funny_animation_package(
         layers=layers,
         decoded_images=decoded_images,
         anim_cfg=anim_cfg,
         output_dir=output_dir,
         safe_base=safe_base,
-        thumbnail_rgba=frames_rgba[0] if frames_rgba else None,
+        thumbnail_rgba=thumbnail_frame,
     )
 
-    # 1. Tạo Sprite Sheet (.png + .json)
-    cols = min(8, max(1, int(math.ceil(math.sqrt(total_frames)))))
-    rows = int(math.ceil(total_frames / float(cols)))
-
-    max_sheet_dim = 8192
-    scale_sheet = min(1.0, max_sheet_dim / float(max(cols * canvas_w, rows * canvas_h)))
-    cell_w = max(1, int(round(canvas_w * scale_sheet)))
-    cell_h = max(1, int(round(canvas_h * scale_sheet)))
-
-    sheet_rgba = np.zeros((rows * cell_h, cols * cell_w, 4), dtype=np.uint8)
-    sheet_meta = {
-        "app": "SpriteSplit Studio",
-        "base_name": safe_base,
-        "fps": fps,
-        "duration": duration,
-        "total_frames": total_frames,
-        "frame_width": cell_w,
-        "frame_height": cell_h,
-        "columns": cols,
-        "rows": rows,
-        "frames": []
-    }
-
-    for idx, frm in enumerate(frames_rgba):
-        r = idx // cols
-        c = idx % cols
-        if scale_sheet < 0.999:
-            cell_img = cv2.resize(frm, (cell_w, cell_h), interpolation=cv2.INTER_AREA)
-        else:
-            cell_img = frm
-        y0 = r * cell_h
-        x0 = c * cell_w
-        sheet_rgba[y0:y0 + cell_h, x0:x0 + cell_w] = cell_img
-        sheet_meta["frames"].append({
-            "frame": idx + 1,
-            "x": x0,
-            "y": y0,
-            "w": cell_w,
-            "h": cell_h,
-            "time": round(idx / float(fps), 4)
-        })
-
-    spritesheet_png_path = os.path.join(output_dir, f"{safe_base}_spritesheet.png")
-    spritesheet_json_path = os.path.join(output_dir, f"{safe_base}_spritesheet.json")
-    Image.fromarray(sheet_rgba, "RGBA").save(spritesheet_png_path, format="PNG")
-    with open(spritesheet_json_path, "w", encoding="utf-8") as f:
-        json.dump(sheet_meta, f, ensure_ascii=False, indent=2)
-
-    # 2. Tạo ảnh động GIF nền trong suốt (.gif)
-    gif_path = os.path.join(output_dir, f"{safe_base}_animation.gif")
-    pil_frames = [Image.fromarray(f, "RGBA") for f in frames_rgba]
-    frame_duration_ms = max(20, int(round(1000.0 / fps)))
-    pil_frames[0].save(
-        gif_path,
-        save_all=True,
-        append_images=pil_frames[1:],
-        duration=frame_duration_ms,
-        loop=0,
-        disposal=2
-    )
-
-    # 3. Tạo Video MP4 (.mp4)
-    mp4_path = os.path.join(output_dir, f"{safe_base}_animation.mp4")
-    bg_mode = anim_cfg.get("export_bg", "dark")
-    if bg_mode == "green":
-        bg_color = np.array([0, 255, 0], dtype=np.float32)
-    elif bg_mode == "white":
-        bg_color = np.array([255, 255, 255], dtype=np.float32)
-    else:
-        bg_color = np.array([24, 24, 27], dtype=np.float32)
-
-    vid_w = canvas_w if canvas_w % 2 == 0 else canvas_w + 1
-    vid_h = canvas_h if canvas_h % 2 == 0 else canvas_h + 1
-    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-    vw = cv2.VideoWriter(mp4_path, fourcc, float(fps), (vid_w, vid_h))
-
-    for frm in frames_rgba:
-        alpha = (frm[:, :, 3:4].astype(np.float32)) / 255.0
-        rgb = frm[:, :, :3].astype(np.float32)
-        comp_rgb = (rgb * alpha + bg_color * (1.0 - alpha)).astype(np.uint8)
-        comp_bgr = cv2.cvtColor(comp_rgb, cv2.COLOR_RGB2BGR)
-        if comp_bgr.shape[1] != vid_w or comp_bgr.shape[0] != vid_h:
-            comp_bgr = cv2.resize(comp_bgr, (vid_w, vid_h), interpolation=cv2.INTER_LINEAR)
-        vw.write(comp_bgr)
-    vw.release()
-
-    # 4. Lưu file cấu hình Rig & Pivot (.json)
+    # 1. Lưu file cấu hình Rig & Pivot (.json)
     rig_json_path = os.path.join(output_dir, f"{safe_base}_rig_project.json")
     rig_export_data = {
         "app": "SpriteSplit Studio Rig & Pivot Project",
@@ -3110,19 +3029,20 @@ def export_character_animation(
     with open(rig_json_path, "w", encoding="utf-8") as f:
         json.dump(rig_export_data, f, ensure_ascii=False, indent=2)
 
-    # 5. Đóng gói tất cả vào 1 file ZIP tổng hợp
+    # 2. Đóng gói tất cả vào 1 file ZIP tổng hợp siêu nhẹ (chỉ chứa các file dự án, cực nhanh)
     zip_path = os.path.join(output_dir, f"{safe_base}_animation_pack.zip")
-    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
-        zf.write(spritesheet_png_path, arcname=os.path.basename(spritesheet_png_path))
-        zf.write(spritesheet_json_path, arcname=os.path.basename(spritesheet_json_path))
-        zf.write(gif_path, arcname=os.path.basename(gif_path))
-        if os.path.exists(mp4_path):
-            zf.write(mp4_path, arcname=os.path.basename(mp4_path))
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_STORED) as zf:
         zf.write(rig_json_path, arcname=os.path.basename(rig_json_path))
         if os.path.exists(funny_pkg["paulto_file"]):
             zf.write(funny_pkg["paulto_file"], arcname=os.path.basename(funny_pkg["paulto_file"]))
-        for p in png_files:
-            zf.write(p, arcname=f"png_sequence/{os.path.basename(p)}")
+        char_json = os.path.join(output_dir, f"{safe_base}.character.json")
+        if os.path.exists(char_json):
+            zf.write(char_json, arcname=os.path.basename(char_json))
+        for root_dir, _, files in os.walk(funny_pkg["project_dir"]):
+            for file_item in files:
+                abs_f = os.path.join(root_dir, file_item)
+                rel_f = os.path.relpath(abs_f, output_dir).replace("\\", "/")
+                zf.write(abs_f, arcname=rel_f)
 
     return {
         "status": "success",
@@ -3130,10 +3050,10 @@ def export_character_animation(
         "total_frames": total_frames,
         "fps": fps,
         "duration": duration,
-        "spritesheet_png": spritesheet_png_path,
-        "spritesheet_json": spritesheet_json_path,
-        "gif_file": gif_path,
-        "mp4_file": mp4_path,
+        "spritesheet_png": "",
+        "spritesheet_json": "",
+        "gif_file": "",
+        "mp4_file": "",
         "rig_json": rig_json_path,
         "zip_file": zip_path,
         "funny_anime_file": funny_pkg["anime_file"],

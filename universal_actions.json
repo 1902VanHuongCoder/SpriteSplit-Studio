@@ -1,0 +1,1570 @@
+{
+  "version": "1.0",
+  "canvas": "400x1000",
+  "skeleton": {
+    "torso": {
+      "parent": null,
+      "pivot": [
+        200,
+        420
+      ]
+    },
+    "neck": {
+      "parent": "torso",
+      "pivot": [
+        200,
+        310
+      ]
+    },
+    "head": {
+      "parent": "neck",
+      "pivot": [
+        200,
+        270
+      ]
+    },
+    "arm_L": {
+      "parent": "torso",
+      "pivot": [
+        160,
+        330
+      ]
+    },
+    "forearm_L": {
+      "parent": "arm_L",
+      "pivot": [
+        150,
+        410
+      ]
+    },
+    "hand_L": {
+      "parent": "forearm_L",
+      "pivot": [
+        145,
+        480
+      ]
+    },
+    "arm_R": {
+      "parent": "torso",
+      "pivot": [
+        240,
+        330
+      ]
+    },
+    "forearm_R": {
+      "parent": "arm_R",
+      "pivot": [
+        250,
+        410
+      ]
+    },
+    "hand_R": {
+      "parent": "forearm_R",
+      "pivot": [
+        255,
+        480
+      ]
+    },
+    "leg_L": {
+      "parent": "torso",
+      "pivot": [
+        175,
+        520
+      ]
+    },
+    "shin_L": {
+      "parent": "leg_L",
+      "pivot": [
+        175,
+        660
+      ]
+    },
+    "foot_L": {
+      "parent": "shin_L",
+      "pivot": [
+        175,
+        780
+      ]
+    },
+    "leg_R": {
+      "parent": "torso",
+      "pivot": [
+        225,
+        520
+      ]
+    },
+    "shin_R": {
+      "parent": "leg_R",
+      "pivot": [
+        225,
+        660
+      ]
+    },
+    "foot_R": {
+      "parent": "shin_R",
+      "pivot": [
+        225,
+        780
+      ]
+    }
+  },
+  "actions": {
+    "standing": {
+      "name": "Đứng tự nhiên (Standing Idle)",
+      "type": "static",
+      "angles": {
+        "torso": 0,
+        "neck": 0,
+        "head": 0,
+        "arm_L": 8,
+        "forearm_L": 5,
+        "hand_L": 0,
+        "arm_R": -8,
+        "forearm_R": -5,
+        "hand_R": 0,
+        "leg_L": 0,
+        "shin_L": 0,
+        "foot_L": 0,
+        "leg_R": 0,
+        "shin_R": 0,
+        "foot_R": 0
+      },
+      "scales": {
+        "torso": [
+          1.0,
+          1.0
+        ],
+        "head": [
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "sitting": {
+      "name": "Ngồi ghế (Sitting)",
+      "type": "static",
+      "angles": {
+        "torso": 0,
+        "neck": 0,
+        "head": 0,
+        "leg_L": 90,
+        "shin_L": -90,
+        "foot_L": 0,
+        "leg_R": 90,
+        "shin_R": -90,
+        "foot_R": 0,
+        "arm_L": 20,
+        "forearm_L": -30,
+        "hand_L": 0,
+        "arm_R": -20,
+        "forearm_R": 30,
+        "hand_R": 0
+      },
+      "scales": {
+        "torso": [
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "squatting": {
+      "name": "Ngồi xổm (Squatting)",
+      "type": "static",
+      "angles": {
+        "torso": 15,
+        "neck": -10,
+        "head": -5,
+        "leg_L": 110,
+        "shin_L": -125,
+        "foot_L": 15,
+        "leg_R": 110,
+        "shin_R": -125,
+        "foot_R": 15,
+        "arm_L": 40,
+        "forearm_L": -45,
+        "hand_L": 10,
+        "arm_R": -40,
+        "forearm_R": 45,
+        "hand_R": -10
+      },
+      "scales": {
+        "torso": [
+          1.05,
+          0.95
+        ]
+      }
+    },
+    "kneeling": {
+      "name": "Quỳ gối (Kneeling)",
+      "type": "static",
+      "angles": {
+        "torso": 0,
+        "neck": 0,
+        "head": 0,
+        "leg_L": 0,
+        "shin_L": -95,
+        "foot_L": 10,
+        "leg_R": 0,
+        "shin_R": -95,
+        "foot_R": 10,
+        "arm_L": 15,
+        "forearm_L": -20,
+        "hand_L": 0,
+        "arm_R": -15,
+        "forearm_R": 20,
+        "hand_R": 0
+      }
+    },
+    "cowering": {
+      "name": "Co rúm sợ hãi (Cowering)",
+      "type": "static",
+      "angles": {
+        "torso": 25,
+        "neck": 15,
+        "head": 10,
+        "leg_L": 35,
+        "shin_L": -40,
+        "foot_L": 5,
+        "leg_R": 25,
+        "shin_R": -30,
+        "foot_R": 5,
+        "arm_L": 75,
+        "forearm_L": -110,
+        "hand_L": -20,
+        "arm_R": -75,
+        "forearm_R": 110,
+        "hand_R": 20
+      },
+      "scales": {
+        "torso": [
+          0.95,
+          0.92
+        ]
+      }
+    },
+    "collapsed": {
+      "name": "Ngã gục bất tỉnh (Collapsed)",
+      "type": "static",
+      "angles": {
+        "torso": 80,
+        "neck": 10,
+        "head": 15,
+        "leg_L": 20,
+        "shin_L": -15,
+        "foot_L": 10,
+        "leg_R": -10,
+        "shin_R": -25,
+        "foot_R": 15,
+        "arm_L": 110,
+        "forearm_L": -30,
+        "hand_L": 0,
+        "arm_R": -70,
+        "forearm_R": 40,
+        "hand_R": 0
+      }
+    },
+    "praying": {
+      "name": "Chắp tay cầu nguyện (Praying)",
+      "type": "static",
+      "angles": {
+        "torso": 8,
+        "neck": 10,
+        "head": 8,
+        "arm_L": 45,
+        "forearm_L": -75,
+        "hand_L": -15,
+        "arm_R": -45,
+        "forearm_R": 75,
+        "hand_R": 15,
+        "leg_L": 0,
+        "shin_L": -95,
+        "foot_L": 5,
+        "leg_R": 0,
+        "shin_R": -95,
+        "foot_R": 5
+      }
+    },
+    "holding_oil_lamp": {
+      "name": "Cầm đèn dầu / Đồ vật (Holding Item)",
+      "type": "static",
+      "angles": {
+        "torso": 0,
+        "neck": -3,
+        "head": -3,
+        "arm_L": 10,
+        "forearm_L": 5,
+        "hand_L": 0,
+        "arm_R": -45,
+        "forearm_R": 85,
+        "hand_R": 10,
+        "leg_L": 0,
+        "shin_L": 0,
+        "foot_L": 0,
+        "leg_R": 0,
+        "shin_R": 0,
+        "foot_R": 0
+      }
+    },
+    "pointing": {
+      "name": "Chỉ tay phía trước (Pointing Forward)",
+      "type": "static",
+      "angles": {
+        "torso": -3,
+        "neck": 3,
+        "head": 2,
+        "arm_L": 12,
+        "forearm_L": 5,
+        "hand_L": 0,
+        "arm_R": -85,
+        "forearm_R": 5,
+        "hand_R": -5,
+        "leg_L": -6,
+        "shin_L": 0,
+        "foot_L": 0,
+        "leg_R": 8,
+        "shin_R": -5,
+        "foot_R": 0
+      },
+      "scales": {
+        "torso": [
+          1.02,
+          1.0
+        ]
+      }
+    },
+    "thinking": {
+      "name": "Đăm chiêu suy nghĩ (Thinking)",
+      "type": "static",
+      "angles": {
+        "torso": 3,
+        "neck": -8,
+        "head": -12,
+        "arm_L": 25,
+        "forearm_L": -45,
+        "hand_L": 10,
+        "arm_R": -65,
+        "forearm_R": 115,
+        "hand_R": 35,
+        "leg_L": -5,
+        "shin_L": 0,
+        "foot_L": 0,
+        "leg_R": 5,
+        "shin_R": -5,
+        "foot_R": 0
+      }
+    },
+    "hands_on_hips": {
+      "name": "Hai tay chống nạnh (Hands on Hips)",
+      "type": "static",
+      "angles": {
+        "torso": 0,
+        "neck": -3,
+        "head": -3,
+        "arm_L": 38,
+        "forearm_L": -85,
+        "hand_L": -25,
+        "arm_R": -38,
+        "forearm_R": 85,
+        "hand_R": 25,
+        "leg_L": -12,
+        "shin_L": 0,
+        "foot_L": 0,
+        "leg_R": 12,
+        "shin_R": 0,
+        "foot_R": 0
+      },
+      "scales": {
+        "torso": [
+          1.04,
+          1.0
+        ]
+      }
+    },
+    "crossed_arms": {
+      "name": "Khoanh tay trước ngực (Crossed Arms)",
+      "type": "static",
+      "angles": {
+        "torso": 0,
+        "neck": 0,
+        "head": 0,
+        "arm_L": 42,
+        "forearm_L": -98,
+        "hand_L": -15,
+        "arm_R": -42,
+        "forearm_R": 98,
+        "hand_R": 15,
+        "leg_L": -6,
+        "shin_L": 0,
+        "foot_L": 0,
+        "leg_R": 6,
+        "shin_R": 0,
+        "foot_R": 0
+      }
+    },
+    "shocked": {
+      "name": "Kinh ngạc hoảng hốt (Shocked)",
+      "type": "static",
+      "angles": {
+        "torso": -8,
+        "neck": 8,
+        "head": 5,
+        "arm_L": 68,
+        "forearm_L": -120,
+        "hand_L": -30,
+        "arm_R": -68,
+        "forearm_R": 120,
+        "hand_R": 30,
+        "leg_L": -15,
+        "shin_L": -12,
+        "foot_L": 5,
+        "leg_R": 10,
+        "shin_R": -10,
+        "foot_R": 5
+      },
+      "scales": {
+        "torso": [
+          0.96,
+          0.98
+        ],
+        "head": [
+          1.05,
+          1.05
+        ]
+      }
+    },
+    "crying_weeping": {
+      "name": "Gục mặt khóc nức nở (Crying Weeping)",
+      "type": "static",
+      "angles": {
+        "torso": 22,
+        "neck": 25,
+        "head": 15,
+        "arm_L": 60,
+        "forearm_L": -105,
+        "hand_L": -25,
+        "arm_R": -60,
+        "forearm_R": 105,
+        "hand_R": 25,
+        "leg_L": 8,
+        "shin_L": -12,
+        "foot_L": 4,
+        "leg_R": 8,
+        "shin_R": -12,
+        "foot_R": 4
+      },
+      "scales": {
+        "torso": [
+          0.96,
+          0.94
+        ]
+      }
+    },
+    "breathing_gentle": {
+      "name": "Thở nhẹ nhàng (Breathing Cycle)",
+      "type": "cycle",
+      "duration": 2000,
+      "loop": true,
+      "keyframes": [
+        {
+          "time": 0,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 0,
+            "neck": 0,
+            "head": 0,
+            "arm_L": 8,
+            "forearm_L": 5,
+            "hand_L": 0,
+            "arm_R": -8,
+            "forearm_R": -5,
+            "hand_R": 0,
+            "leg_L": 0,
+            "shin_L": 0,
+            "foot_L": 0,
+            "leg_R": 0,
+            "shin_R": 0,
+            "foot_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.0,
+              1.0
+            ],
+            "head": [
+              1.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "time": 1000,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": -3,
+            "neck": 2,
+            "head": -2,
+            "arm_L": 14,
+            "forearm_L": 8,
+            "hand_L": 2,
+            "arm_R": -14,
+            "forearm_R": -8,
+            "hand_R": -2,
+            "leg_L": 0,
+            "shin_L": 0,
+            "foot_L": 0,
+            "leg_R": 0,
+            "shin_R": 0,
+            "foot_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.08,
+              1.05
+            ],
+            "head": [
+              1.02,
+              1.02
+            ]
+          }
+        },
+        {
+          "time": 2000,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 0,
+            "neck": 0,
+            "head": 0,
+            "arm_L": 8,
+            "forearm_L": 5,
+            "hand_L": 0,
+            "arm_R": -8,
+            "forearm_R": -5,
+            "hand_R": 0,
+            "leg_L": 0,
+            "shin_L": 0,
+            "foot_L": 0,
+            "leg_R": 0,
+            "shin_R": 0,
+            "foot_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.0,
+              1.0
+            ],
+            "head": [
+              1.0,
+              1.0
+            ]
+          }
+        }
+      ]
+    },
+    "bouncing_idle": {
+      "name": "Nhún người nhẹ (Bouncing Bob)",
+      "type": "cycle",
+      "duration": 1200,
+      "loop": true,
+      "keyframes": [
+        {
+          "time": 0,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 0,
+            "neck": 0,
+            "head": 0,
+            "arm_L": 8,
+            "forearm_L": 5,
+            "hand_L": 0,
+            "arm_R": -8,
+            "forearm_R": -5,
+            "hand_R": 0,
+            "leg_L": 0,
+            "shin_L": 0,
+            "foot_L": 0,
+            "leg_R": 0,
+            "shin_R": 0,
+            "foot_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.0,
+              1.0
+            ],
+            "leg_L": [
+              1.0,
+              1.0
+            ],
+            "leg_R": [
+              1.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "time": 400,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 2,
+            "neck": -1,
+            "head": 0,
+            "arm_L": 12,
+            "forearm_L": 10,
+            "hand_L": 0,
+            "arm_R": -12,
+            "forearm_R": -10,
+            "hand_R": 0,
+            "leg_L": 6,
+            "shin_L": -10,
+            "foot_L": 4,
+            "leg_R": 6,
+            "shin_R": -10,
+            "foot_R": 4
+          },
+          "scales": {
+            "torso": [
+              1.06,
+              0.92
+            ],
+            "leg_L": [
+              1.02,
+              0.94
+            ],
+            "leg_R": [
+              1.02,
+              0.94
+            ]
+          }
+        },
+        {
+          "time": 800,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": -1,
+            "neck": 1,
+            "head": 0,
+            "arm_L": 6,
+            "forearm_L": 4,
+            "hand_L": 0,
+            "arm_R": -6,
+            "forearm_R": -4,
+            "hand_R": 0,
+            "leg_L": -1,
+            "shin_L": 0,
+            "foot_L": 0,
+            "leg_R": -1,
+            "shin_R": 0,
+            "foot_R": 0
+          },
+          "scales": {
+            "torso": [
+              0.96,
+              1.05
+            ],
+            "leg_L": [
+              0.98,
+              1.02
+            ],
+            "leg_R": [
+              0.98,
+              1.02
+            ]
+          }
+        },
+        {
+          "time": 1200,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 0,
+            "neck": 0,
+            "head": 0,
+            "arm_L": 8,
+            "forearm_L": 5,
+            "hand_L": 0,
+            "arm_R": -8,
+            "forearm_R": -5,
+            "hand_R": 0,
+            "leg_L": 0,
+            "shin_L": 0,
+            "foot_L": 0,
+            "leg_R": 0,
+            "shin_R": 0,
+            "foot_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.0,
+              1.0
+            ],
+            "leg_L": [
+              1.0,
+              1.0
+            ],
+            "leg_R": [
+              1.0,
+              1.0
+            ]
+          }
+        }
+      ]
+    },
+    "walking_natural": {
+      "name": "Đi bộ tự nhiên (Walking Cycle)",
+      "type": "cycle",
+      "duration": 1200,
+      "loop": true,
+      "keyframes": [
+        {
+          "time": 0,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 2,
+            "neck": -1,
+            "head": -1,
+            "leg_L": 25,
+            "shin_L": -10,
+            "foot_L": 0,
+            "leg_R": -25,
+            "shin_R": -35,
+            "foot_R": 10,
+            "arm_L": -25,
+            "forearm_L": 20,
+            "hand_L": 0,
+            "arm_R": 25,
+            "forearm_R": -20,
+            "hand_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "time": 300,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 0,
+            "neck": 0,
+            "head": 0,
+            "leg_L": 5,
+            "shin_L": -30,
+            "foot_L": 5,
+            "leg_R": 0,
+            "shin_R": -5,
+            "foot_R": 0,
+            "arm_L": -5,
+            "forearm_L": 10,
+            "hand_L": 0,
+            "arm_R": 5,
+            "forearm_R": -10,
+            "hand_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.02,
+              0.97
+            ]
+          }
+        },
+        {
+          "time": 600,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 2,
+            "neck": -1,
+            "head": -1,
+            "leg_L": -25,
+            "shin_L": -35,
+            "foot_L": 10,
+            "leg_R": 25,
+            "shin_R": -10,
+            "foot_R": 0,
+            "arm_L": 25,
+            "forearm_L": -20,
+            "hand_L": 0,
+            "arm_R": -25,
+            "forearm_R": 20,
+            "hand_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "time": 900,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 0,
+            "neck": 0,
+            "head": 0,
+            "leg_L": 0,
+            "shin_L": -5,
+            "foot_L": 0,
+            "leg_R": 5,
+            "shin_R": -30,
+            "foot_R": 5,
+            "arm_L": 5,
+            "forearm_L": -10,
+            "hand_L": 0,
+            "arm_R": -5,
+            "forearm_R": 10,
+            "hand_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.02,
+              0.97
+            ]
+          }
+        },
+        {
+          "time": 1200,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 2,
+            "neck": -1,
+            "head": -1,
+            "leg_L": 25,
+            "shin_L": -10,
+            "foot_L": 0,
+            "leg_R": -25,
+            "shin_R": -35,
+            "foot_R": 10,
+            "arm_L": -25,
+            "forearm_L": 20,
+            "hand_L": 0,
+            "arm_R": 25,
+            "forearm_R": -20,
+            "hand_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.0,
+              1.0
+            ]
+          }
+        }
+      ]
+    },
+    "running_fast": {
+      "name": "Chạy nhanh / Tháo chạy (Running Fast)",
+      "type": "cycle",
+      "duration": 800,
+      "loop": true,
+      "keyframes": [
+        {
+          "time": 0,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 18,
+            "neck": -10,
+            "head": -5,
+            "leg_L": 50,
+            "shin_L": -20,
+            "foot_L": 5,
+            "leg_R": -45,
+            "shin_R": -70,
+            "foot_R": 20,
+            "arm_L": -65,
+            "forearm_L": 80,
+            "hand_L": 10,
+            "arm_R": 55,
+            "forearm_R": -75,
+            "hand_R": -10
+          },
+          "scales": {
+            "torso": [
+              1.02,
+              0.96
+            ]
+          }
+        },
+        {
+          "time": 200,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 14,
+            "neck": -8,
+            "head": -4,
+            "leg_L": 15,
+            "shin_L": -50,
+            "foot_L": 10,
+            "leg_R": -10,
+            "shin_R": -40,
+            "foot_R": 15,
+            "arm_L": -15,
+            "forearm_L": 45,
+            "hand_L": 5,
+            "arm_R": 15,
+            "forearm_R": -40,
+            "hand_R": -5
+          },
+          "scales": {
+            "torso": [
+              0.98,
+              1.04
+            ]
+          }
+        },
+        {
+          "time": 400,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 18,
+            "neck": -10,
+            "head": -5,
+            "leg_L": -45,
+            "shin_L": -70,
+            "foot_L": 20,
+            "leg_R": 50,
+            "shin_R": -20,
+            "foot_R": 5,
+            "arm_L": 55,
+            "forearm_L": -75,
+            "hand_L": -10,
+            "arm_R": -65,
+            "forearm_R": 80,
+            "hand_R": 10
+          },
+          "scales": {
+            "torso": [
+              1.02,
+              0.96
+            ]
+          }
+        },
+        {
+          "time": 600,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 14,
+            "neck": -8,
+            "head": -4,
+            "leg_L": -10,
+            "shin_L": -40,
+            "foot_L": 15,
+            "leg_R": 15,
+            "shin_R": -50,
+            "foot_R": 10,
+            "arm_L": 15,
+            "forearm_L": -40,
+            "hand_L": -5,
+            "arm_R": -15,
+            "forearm_R": 45,
+            "hand_R": 5
+          },
+          "scales": {
+            "torso": [
+              0.98,
+              1.04
+            ]
+          }
+        },
+        {
+          "time": 800,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 18,
+            "neck": -10,
+            "head": -5,
+            "leg_L": 50,
+            "shin_L": -20,
+            "foot_L": 5,
+            "leg_R": -45,
+            "shin_R": -70,
+            "foot_R": 20,
+            "arm_L": -65,
+            "forearm_L": 80,
+            "hand_L": 10,
+            "arm_R": 55,
+            "forearm_R": -75,
+            "hand_R": -10
+          },
+          "scales": {
+            "torso": [
+              1.02,
+              0.96
+            ]
+          }
+        }
+      ]
+    },
+    "sneaking": {
+      "name": "Rón rén lén lút (Sneaking)",
+      "type": "cycle",
+      "duration": 1600,
+      "loop": true,
+      "keyframes": [
+        {
+          "time": 0,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 22,
+            "neck": -12,
+            "head": -8,
+            "leg_L": 38,
+            "shin_L": -55,
+            "foot_L": 15,
+            "leg_R": -20,
+            "shin_R": -45,
+            "foot_R": 20,
+            "arm_L": -30,
+            "forearm_L": 70,
+            "hand_L": 15,
+            "arm_R": 25,
+            "forearm_R": 65,
+            "hand_R": 15
+          },
+          "scales": {
+            "torso": [
+              1.04,
+              0.92
+            ]
+          }
+        },
+        {
+          "time": 400,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 20,
+            "neck": -10,
+            "head": -8,
+            "leg_L": 10,
+            "shin_L": -40,
+            "foot_L": 10,
+            "leg_R": 5,
+            "shin_R": -50,
+            "foot_R": 20,
+            "arm_L": -10,
+            "forearm_L": 60,
+            "hand_L": 10,
+            "arm_R": 10,
+            "forearm_R": 60,
+            "hand_R": 10
+          },
+          "scales": {
+            "torso": [
+              1.02,
+              0.94
+            ]
+          }
+        },
+        {
+          "time": 800,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 22,
+            "neck": -12,
+            "head": -8,
+            "leg_L": -20,
+            "shin_L": -45,
+            "foot_L": 20,
+            "leg_R": 38,
+            "shin_R": -55,
+            "foot_R": 15,
+            "arm_L": 25,
+            "forearm_L": 65,
+            "hand_L": 15,
+            "arm_R": -30,
+            "forearm_R": 70,
+            "hand_R": 15
+          },
+          "scales": {
+            "torso": [
+              1.04,
+              0.92
+            ]
+          }
+        },
+        {
+          "time": 1200,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 20,
+            "neck": -10,
+            "head": -8,
+            "leg_L": 5,
+            "shin_L": -50,
+            "foot_L": 20,
+            "leg_R": 10,
+            "shin_R": -40,
+            "foot_R": 10,
+            "arm_L": 10,
+            "forearm_L": 60,
+            "hand_L": 10,
+            "arm_R": -10,
+            "forearm_R": 60,
+            "hand_R": 10
+          },
+          "scales": {
+            "torso": [
+              1.02,
+              0.94
+            ]
+          }
+        },
+        {
+          "time": 1600,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 22,
+            "neck": -12,
+            "head": -8,
+            "leg_L": 38,
+            "shin_L": -55,
+            "foot_L": 15,
+            "leg_R": -20,
+            "shin_R": -45,
+            "foot_R": 20,
+            "arm_L": -30,
+            "forearm_L": 70,
+            "hand_L": 15,
+            "arm_R": 25,
+            "forearm_R": 65,
+            "hand_R": 15
+          },
+          "scales": {
+            "torso": [
+              1.04,
+              0.92
+            ]
+          }
+        }
+      ]
+    },
+    "trembling_scared": {
+      "name": "Run rẩy sợ hãi / Rét run (Trembling)",
+      "type": "cycle",
+      "duration": 400,
+      "loop": true,
+      "keyframes": [
+        {
+          "time": 0,
+          "easing": "linear",
+          "angles": {
+            "torso": 25,
+            "neck": 12,
+            "head": 8,
+            "leg_L": 20,
+            "shin_L": -25,
+            "foot_L": 5,
+            "leg_R": 18,
+            "shin_R": -22,
+            "foot_R": 5,
+            "arm_L": 55,
+            "forearm_L": -95,
+            "hand_L": -15,
+            "arm_R": -55,
+            "forearm_R": 95,
+            "hand_R": 15
+          },
+          "scales": {
+            "torso": [
+              0.95,
+              0.93
+            ]
+          }
+        },
+        {
+          "time": 100,
+          "easing": "linear",
+          "angles": {
+            "torso": 27,
+            "neck": 15,
+            "head": 11,
+            "leg_L": 22,
+            "shin_L": -28,
+            "foot_L": 6,
+            "leg_R": 20,
+            "shin_R": -25,
+            "foot_R": 6,
+            "arm_L": 58,
+            "forearm_L": -98,
+            "hand_L": -18,
+            "arm_R": -52,
+            "forearm_R": 92,
+            "hand_R": 12
+          },
+          "scales": {
+            "torso": [
+              0.97,
+              0.95
+            ]
+          }
+        },
+        {
+          "time": 200,
+          "easing": "linear",
+          "angles": {
+            "torso": 24,
+            "neck": 11,
+            "head": 7,
+            "leg_L": 19,
+            "shin_L": -23,
+            "foot_L": 4,
+            "leg_R": 17,
+            "shin_R": -21,
+            "foot_R": 4,
+            "arm_L": 53,
+            "forearm_L": -92,
+            "hand_L": -12,
+            "arm_R": -57,
+            "forearm_R": 97,
+            "hand_R": 17
+          },
+          "scales": {
+            "torso": [
+              0.94,
+              0.92
+            ]
+          }
+        },
+        {
+          "time": 300,
+          "easing": "linear",
+          "angles": {
+            "torso": 26,
+            "neck": 14,
+            "head": 10,
+            "leg_L": 21,
+            "shin_L": -27,
+            "foot_L": 5,
+            "leg_R": 19,
+            "shin_R": -24,
+            "foot_R": 5,
+            "arm_L": 57,
+            "forearm_L": -96,
+            "hand_L": -16,
+            "arm_R": -54,
+            "forearm_R": 94,
+            "hand_R": 14
+          },
+          "scales": {
+            "torso": [
+              0.96,
+              0.94
+            ]
+          }
+        },
+        {
+          "time": 400,
+          "easing": "linear",
+          "angles": {
+            "torso": 25,
+            "neck": 12,
+            "head": 8,
+            "leg_L": 20,
+            "shin_L": -25,
+            "foot_L": 5,
+            "leg_R": 18,
+            "shin_R": -22,
+            "foot_R": 5,
+            "arm_L": 55,
+            "forearm_L": -95,
+            "hand_L": -15,
+            "arm_R": -55,
+            "forearm_R": 95,
+            "hand_R": 15
+          },
+          "scales": {
+            "torso": [
+              0.95,
+              0.93
+            ]
+          }
+        }
+      ]
+    },
+    "waving_hand": {
+      "name": "Vẫy tay chào (Waving Hand)",
+      "type": "cycle",
+      "duration": 1000,
+      "loop": true,
+      "keyframes": [
+        {
+          "time": 0,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": -2,
+            "neck": 2,
+            "head": 4,
+            "arm_L": 8,
+            "forearm_L": 5,
+            "hand_L": 0,
+            "arm_R": -125,
+            "forearm_R": 60,
+            "hand_R": 10,
+            "leg_L": -4,
+            "shin_L": 0,
+            "foot_L": 0,
+            "leg_R": 4,
+            "shin_R": 0,
+            "foot_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "time": 250,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": -3,
+            "neck": 3,
+            "head": 6,
+            "arm_L": 8,
+            "forearm_L": 5,
+            "hand_L": 0,
+            "arm_R": -120,
+            "forearm_R": 85,
+            "hand_R": 25,
+            "leg_L": -4,
+            "shin_L": 0,
+            "foot_L": 0,
+            "leg_R": 4,
+            "shin_R": 0,
+            "foot_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.01,
+              1.0
+            ]
+          }
+        },
+        {
+          "time": 500,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": -2,
+            "neck": 2,
+            "head": 4,
+            "arm_L": 8,
+            "forearm_L": 5,
+            "hand_L": 0,
+            "arm_R": -125,
+            "forearm_R": 50,
+            "hand_R": -5,
+            "leg_L": -4,
+            "shin_L": 0,
+            "foot_L": 0,
+            "leg_R": 4,
+            "shin_R": 0,
+            "foot_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "time": 750,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": -3,
+            "neck": 3,
+            "head": 6,
+            "arm_L": 8,
+            "forearm_L": 5,
+            "hand_L": 0,
+            "arm_R": -120,
+            "forearm_R": 85,
+            "hand_R": 25,
+            "leg_L": -4,
+            "shin_L": 0,
+            "foot_L": 0,
+            "leg_R": 4,
+            "shin_R": 0,
+            "foot_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.01,
+              1.0
+            ]
+          }
+        },
+        {
+          "time": 1000,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": -2,
+            "neck": 2,
+            "head": 4,
+            "arm_L": 8,
+            "forearm_L": 5,
+            "hand_L": 0,
+            "arm_R": -125,
+            "forearm_R": 60,
+            "hand_R": 10,
+            "leg_L": -4,
+            "shin_L": 0,
+            "foot_L": 0,
+            "leg_R": 4,
+            "shin_R": 0,
+            "foot_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.0,
+              1.0
+            ]
+          }
+        }
+      ]
+    },
+    "nodding_agree": {
+      "name": "Gật đầu đồng ý (Nodding Agree)",
+      "type": "cycle",
+      "duration": 1200,
+      "loop": true,
+      "keyframes": [
+        {
+          "time": 0,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 0,
+            "neck": 0,
+            "head": -2,
+            "arm_L": 10,
+            "forearm_L": 15,
+            "hand_L": 5,
+            "arm_R": -10,
+            "forearm_R": -15,
+            "hand_R": -5,
+            "leg_L": 0,
+            "shin_L": 0,
+            "foot_L": 0,
+            "leg_R": 0,
+            "shin_R": 0,
+            "foot_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "time": 300,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 3,
+            "neck": 6,
+            "head": 18,
+            "arm_L": 12,
+            "forearm_L": 20,
+            "hand_L": 5,
+            "arm_R": -12,
+            "forearm_R": -20,
+            "hand_R": -5,
+            "leg_L": 0,
+            "shin_L": 0,
+            "foot_L": 0,
+            "leg_R": 0,
+            "shin_R": 0,
+            "foot_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.01,
+              0.99
+            ]
+          }
+        },
+        {
+          "time": 600,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 0,
+            "neck": -2,
+            "head": -6,
+            "arm_L": 10,
+            "forearm_L": 15,
+            "hand_L": 5,
+            "arm_R": -10,
+            "forearm_R": -15,
+            "hand_R": -5,
+            "leg_L": 0,
+            "shin_L": 0,
+            "foot_L": 0,
+            "leg_R": 0,
+            "shin_R": 0,
+            "foot_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "time": 900,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 2,
+            "neck": 4,
+            "head": 14,
+            "arm_L": 11,
+            "forearm_L": 18,
+            "hand_L": 5,
+            "arm_R": -11,
+            "forearm_R": -18,
+            "hand_R": -5,
+            "leg_L": 0,
+            "shin_L": 0,
+            "foot_L": 0,
+            "leg_R": 0,
+            "shin_R": 0,
+            "foot_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.01,
+              0.99
+            ]
+          }
+        },
+        {
+          "time": 1200,
+          "easing": "easeInOut",
+          "angles": {
+            "torso": 0,
+            "neck": 0,
+            "head": -2,
+            "arm_L": 10,
+            "forearm_L": 15,
+            "hand_L": 5,
+            "arm_R": -10,
+            "forearm_R": -15,
+            "hand_R": -5,
+            "leg_L": 0,
+            "shin_L": 0,
+            "foot_L": 0,
+            "leg_R": 0,
+            "shin_R": 0,
+            "foot_R": 0
+          },
+          "scales": {
+            "torso": [
+              1.0,
+              1.0
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
